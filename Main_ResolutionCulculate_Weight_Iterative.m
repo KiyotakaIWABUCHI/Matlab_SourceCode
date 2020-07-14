@@ -49,7 +49,7 @@ for Obj_Target_Size_tmp=10:10:Obj_Back_Size(1)
     for Map_update_Step_inv=0:0.1:1
         cnt_Map_step=cnt_Map_step+1;
         
-        Measurement_Excel(1,cnt_obj_size+1)=Map_update_Step_inv; % CSV
+        Measurement_Excel(1,cnt_Map_step+1)=Map_update_Step_inv; % CSV
        
         Map_update_Step=Map_update_Step_inv;
         Heat_map=ones(SIZE); % Heatmap Initialize
