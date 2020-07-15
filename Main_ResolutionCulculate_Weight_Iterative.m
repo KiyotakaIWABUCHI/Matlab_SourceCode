@@ -63,7 +63,7 @@ for Obj_Target_Size_tmp=10:10:Obj_Back_Size(1)
         %imshow(uint8(tmp))
         
         %%%%%%%%% Iterative MC %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        
+        Error_min=realmax;
         for i=0:T_LOOP
             %figure
             %% ‚‘¬‰»ŽžE•Ài‚Ì‚Ý
@@ -79,12 +79,15 @@ for Obj_Target_Size_tmp=10:10:Obj_Back_Size(1)
             Heat_map=double(Heat_map>=0).*Heat_map;
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             
+            Error=sum(abs(Mov_target-[Estimation_y Estimation_x]));
+            if(Error_min>Error)
+                Error_min=Error;
+            end
         end
         
         %%% Measurement Result %%%%%%%%%%%%%
-        Error=sum(abs(Mov_target-[Estimation_y Estimation_x]));
-        Measurement_Excel(cnt_obj_size+1,cnt_Map_step+1)=Error;
-        csvwrite(['../csv/tmp/ObjSize_vs_HeatMapWeight.csv'],Measurement_Excel);
+        Measurement_Excel(cnt_obj_size+1,cnt_Map_step+1)=Error_min;
+        csvwrite(['../csv/tmp/Mov10_ObjSize_vs_HeatMapWeight.csv'],Measurement_Excel);
     end
 end
 
