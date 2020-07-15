@@ -17,7 +17,7 @@ register_dy(1:number_frame)=0;
 
 for x=Range_x(1):Range_x(3):Range_x(2)
     Enable_Area=zeros(TATE,YOKO);
-    now=x
+    %now=x
     for y=Range_y(1):Range_y(3):Range_y(2)
         %now=y
         shift_per_bitplane_x=double(x)/(T-1);
