@@ -10,7 +10,7 @@ alpha=2; %0.4                    %paramater for contralling incident photon
 block_size_MLE=10;
 SIZE=[256 256];
 
-for Mov_tmp=10:10:30
+for Mov_tmp=10:5:30
     
     %% parameter ME Prop.
     down_sample_rate=0;
@@ -43,13 +43,13 @@ for Mov_tmp=10:10:30
     
     %%%%%%%%%%%%% Main St%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     cnt_obj_size=0; % Count Initialize
-    for Obj_Target_Size_tmp=10:10:Obj_Back_Size(1)      
+    for Obj_Target_Size_tmp=50:50      
         cnt_obj_size=cnt_obj_size+1;
         Obj_Target_Size=[Obj_Target_Size_tmp Obj_Target_Size_tmp];
         Measurement_Excel(cnt_obj_size+1,1)=Obj_Target_Size_tmp; % CSV
         
         cnt_Map_step=0; % Count Initialize
-        for Map_update_Step_inv=0:0.1:1
+        for Map_update_Step_inv=0:0.2:1
             dsp=[Mov_tmp Obj_Target_Size_tmp Map_update_Step_inv]
             cnt_Map_step=cnt_Map_step+1;
             
@@ -91,7 +91,7 @@ for Mov_tmp=10:10:30
             
             %%% Measurement Result %%%%%%%%%%%%%
             Measurement_Excel(cnt_obj_size+1,cnt_Map_step+1)=Error_min;
-            csvwrite(['../csv/tmp/Mov',num2str(Mov_tmp),'_ObjSize_vs_HeatMapWeight.csv'],Measurement_Excel);
+            csvwrite(['../csv/tmp/Mov',num2str(Mov_tmp),'_Mov_vs_HeatMapWeight.csv'],Measurement_Excel);
         end
     end
 end

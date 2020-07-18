@@ -6,10 +6,11 @@ if(down_sample_rate==0)
     bitplane=bitplane_origin;
     down_sample_Pix=1;
 else
+    bitplane_Downsampled=bitplane_origin;
     for t=1:down_sample_rate
         bitplane_Downsampled=Function_DownSampling_Bitplane(bitplane_Downsampled);
     end
-    bitplane=bitplane_Downsample;
+    bitplane=bitplane_Downsampled;
     down_sample_Pix=2^(down_sample_rate+1);
 end
 
