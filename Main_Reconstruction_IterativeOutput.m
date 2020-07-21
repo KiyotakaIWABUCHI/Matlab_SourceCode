@@ -11,20 +11,25 @@ Down_Sample_Rate_Reconstruction=1;
 %%
 sigma_chi=1;
 %% chi update ver param
-Kernel_size=10; %10 dolfine %car heri 3
+Kernel_size=3; %10 dolfine %car heri 3
 sigma=50; %100
-Cycle_update=10; %car he2
+Cycle_update=1; %car he2
 %% Rank Min reconst param
-rank_num=5;
+rank_num=3;
+%% Previously Heatmap param
+Th_HeatMap=0.2;
 
 %%
 bitplanes=zeros(256,256,256,10);
 CHI_Maps=zeros(256,256,10);
+HeatMaps=zeros(256,256,10);
 CHI_Sum=zeros(256,256,10);
 
 for i=0:9
     load(['../Images/Output/test/IterativeOutput_',num2str(i+1),'times_bitplaneStyle']);
+    load(['../Images/Output/test/HeatMap_',num2str(i+1),'times_bitplaneStyle']);
     bitplanes(:,:,:,i+1)=bitplane_MC;
+    HeatMaps(:,:,i+1)=Heat_map;
     [img_norm,img]=Function_Reconstruction_SUM(bitplane_MC);
     figure
     imshow(uint8(img))
@@ -112,3 +117,16 @@ end
 figure('Name','exp_weight_rank_image_update')
 imshow(uint8(img_result_rank./w_total_rank))
 
+%% Previously Heatmap 
+
+img_result_PrevHeatMap=zeros(SIZE);
+w_total_PrevHeatMap=zeros(SIZE);
+
+for i=0:9
+    HeatMap_upperTh=double(HeatMaps(:,:,i+1)<=Th_HeatMap);
+    w_tmp_PrevHeatMap=exp(double(-(HeatMap_upperTh*realmax+CHI_Maps(:,:,i+1)))/sigma_chi);
+    img_result_PrevHeatMap=img_result_PrevHeatMap+w_tmp_PrevHeatMap.*double(imgs(:,:,i+1));
+    w_total_PrevHeatMap=w_total_PrevHeatMap+w_tmp_PrevHeatMap;
+end
+figure('Name','exp weight Previously Heatmap ')
+imshow(uint8(img_result_PrevHeatMap./w_total_PrevHeatMap))
