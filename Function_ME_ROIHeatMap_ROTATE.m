@@ -12,7 +12,6 @@ Estimation_y=zeros(TATE,YOKO);
 Margin_X=round(YOKO/2);
 Margin_Y=round(TATE/2);
 %%%%%%%%%%%%%%%%%%%%% initialize Ed %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 for jshift=Range_x(1):Range_x(3):Range_x(2) %-60:20
     now=jshift
     for ishift=Range_y(1):Range_y(3):Range_y(2)

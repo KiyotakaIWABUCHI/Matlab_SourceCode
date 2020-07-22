@@ -24,8 +24,8 @@ T_LOOP=10;  %注意 Resolution測定時，1
 %% Map Update
 Down_Sample_Rate_MapUpdate=1;
 K_sigmoid_centor=10;
-STEP_sigmoid=0.4; %注意 Resolution測定時，Map指定のためコメントアウト
-K_DIV=0.5; %注意0.5はほぼ閾値判定
+STEP_sigmoid=0.5; %注意 Resolution測定時，Map指定のためコメントアウト
+K_DIV=2; %注意0.5はほぼ閾値判定
 %% Read Images
 Imgs=zeros(SIZE(1),SIZE(2),output_subframe_number);
 for t_tmp=1:output_subframe_number

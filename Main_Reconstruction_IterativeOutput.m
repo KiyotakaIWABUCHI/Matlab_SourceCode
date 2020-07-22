@@ -11,34 +11,34 @@ Down_Sample_Rate_Reconstruction=1;
 %%
 sigma_chi=1;
 %% chi update ver param
-Kernel_size=3; %10 dolfine %car heri 3
+Kernel_size=2; %10 dolfine %car heri 3
 sigma=50; %100
 Cycle_update=1; %car he2
 %% Rank Min reconst param
-rank_num=3;
+rank_num=1;
 %% Previously Heatmap param
-Th_HeatMap=0.2;
+Th_HeatMap=0.0;
 
 %%
 bitplanes=zeros(256,256,256,10);
 CHI_Maps=zeros(256,256,10);
 HeatMaps=zeros(256,256,10);
 CHI_Sum=zeros(256,256,10);
-
+Obj='bird'
 for i=0:9
-    load(['../Images/Output/test/IterativeOutput_',num2str(i+1),'times_bitplaneStyle']);
-    load(['../Images/Output/test/HeatMap_',num2str(i+1),'times_bitplaneStyle']);
+    load(['../Images/Output/',Obj,'/IterativeOutput_',num2str(i+1),'times_bitplaneStyle']);
+    load(['../Images/Output/',Obj,'/HeatMap_',num2str(i+1),'times_bitplaneStyle']);
     bitplanes(:,:,:,i+1)=bitplane_MC;
     HeatMaps(:,:,i+1)=Heat_map;
     [img_norm,img]=Function_Reconstruction_SUM(bitplane_MC);
-    figure
-    imshow(uint8(img))
+%     figure
+%     imshow(uint8(img))
     
     [chi_2D]=Function_Module_Chi2MapCul(bitplane_MC,Down_Sample_Rate_Reconstruction);
     chi_2D=imresize(chi_2D,SIZE,'bicubic');
     CHI_Maps(:,:,i+1)=chi_2D;
-%   figure
-%   imshow(uint8(CHI_Maps(:,:,i+1)*5))
+  figure
+  imshow(uint8(CHI_Maps(:,:,i+1)*5))
 end
  
 %% chi no update ver
@@ -117,7 +117,7 @@ end
 figure('Name','exp_weight_rank_image_update')
 imshow(uint8(img_result_rank./w_total_rank))
 
-%% Previously Heatmap 
+%% Using Previously Heatmap > Th
 
 img_result_PrevHeatMap=zeros(SIZE);
 w_total_PrevHeatMap=zeros(SIZE);
@@ -130,3 +130,43 @@ for i=0:9
 end
 figure('Name','exp weight Previously Heatmap ')
 imshow(uint8(img_result_PrevHeatMap./w_total_PrevHeatMap))
+
+%% test ‚ ‚Æ‚ÅÁ‹Ž
+img_result_test=zeros(SIZE);
+w_total_test=zeros(SIZE);
+
+for i=0:4:4
+    w_tmp_test=exp(double(-(CHI_Maps(:,:,i+1)))/sigma_chi);
+    img_result_test=img_result_test+w_tmp_test.*double(imgs(:,:,i+1));
+    w_total_test=w_total_test+w_tmp_test;
+end
+figure('Name','exp weight test ')
+imshow(uint8(img_result_test./w_total_test))
+%% Ref Neighbor Pixel
+Kernel_i=7;
+Kernel_j=7;
+img_result_Neighbor=zeros(SIZE);
+for i=1+Kernel_i:SIZE(1)-Kernel_i
+    for j=1+Kernel_j:SIZE(2)-Kernel_j
+        cost_min_Neighbor=realmax;
+        cost_min_centor=realmax;
+        for c=1:10
+            cost_tmp=CHI_Maps(i,j,c);
+            cost_Neighbor_tmp=sum(sum(CHI_Maps(i-Kernel_i:i+Kernel_i,j-Kernel_j:j+Kernel_j,c)));
+            if(cost_min_Neighbor>cost_Neighbor_tmp)
+                cost_min_Neighbor=cost_Neighbor_tmp;
+                c_Neighbor=c;
+            end
+            if(cost_min_centor>cost_tmp)
+                cost_min_centor=cost_tmp;
+                c_centor=c;
+            end         
+        end
+        w_neighbor=exp(double(-(CHI_Maps(i,j,c_Neighbor)))/sigma_chi);
+        w_centor=exp(double(-(CHI_Maps(i,j,c_Neighbor)))/sigma_chi);
+        img_result_Neighbor(i,j)=w_neighbor*double(imgs(i,j,c_Neighbor))+w_centor*double(imgs(i,j,c_centor));
+        img_result_Neighbor(i,j)=img_result_Neighbor(i,j)/(w_neighbor+w_centor);
+    end
+end
+figure('Name','exp weight Neighber ')
+imshow(uint8(img_result_Neighbor))
