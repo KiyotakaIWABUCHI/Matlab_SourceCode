@@ -9,11 +9,11 @@ alpha=2; %0.4                    %paramater for contralling incident photon
 SIZE=[256 256];
 Down_Sample_Rate_Reconstruction=1;
 %%
-sigma_chi=1;
+sigma_chi=10;
 %% chi update ver param
-Kernel_size=2; %10 dolfine %car heri 3
+Kernel_size=3; %10 dolfine %car heri 3
 sigma=50; %100
-Cycle_update=1; %car he2
+Cycle_update=3; %car he2
 %% Rank Min reconst param
 rank_num=1;
 %% Previously Heatmap param
@@ -24,7 +24,10 @@ bitplanes=zeros(256,256,256,10);
 CHI_Maps=zeros(256,256,10);
 HeatMaps=zeros(256,256,10);
 CHI_Sum=zeros(256,256,10);
-Obj='bird'
+%% Obj Selection
+Obj='test'
+%Obj='bird'
+%%
 for i=0:9
     load(['../Images/Output/',Obj,'/IterativeOutput_',num2str(i+1),'times_bitplaneStyle']);
     load(['../Images/Output/',Obj,'/HeatMap_',num2str(i+1),'times_bitplaneStyle']);

@@ -13,9 +13,9 @@ SIZE=[256 256];
 %% parameter ME Prop.
 down_sample_rate=1;
 Down_Sample_Rate_Grav=2;
-Range_x=[-40 40 4]; %[start end] çèÇ› range_x=[-40 40 4]; dolfine car_bus bird
+Range_x=[-20 20 4]; %[start end] çèÇ› range_x=[-40 40 4]; dolfine car_bus bird
 Range_y=[-0 0 4]; %range_y=[-20 20 4]; dolfin car_bus bird
-Range_rotate=[0 0 2]; %Ç»Çµ
+Range_rotate=[-20 20 4]; %Ç»Çµ
 Range_scale=[0 0 10]; %Ç»Çµ
 
 %% Iterative Loop Num
@@ -29,11 +29,16 @@ K_DIV=2; %íçà”0.5ÇÕÇŸÇ⁄ËáílîªíË
 %% Read Images
 Imgs=zeros(SIZE(1),SIZE(2),output_subframe_number);
 for t_tmp=1:output_subframe_number
-    %% Choise Images
-    tmp=rgb2gray(imread(['../Images/Input/3dsmax_car_bus_heri/car_bus_heri_frame',pad(num2str(t_tmp-1),4,'left','0'),'.png']));
+   %% Choise Images
+    %tmp=rgb2gray(imread(['../Images/Input/3dsmax_car_bus_heri/car_bus_heri_frame',pad(num2str(t_tmp-1),4,'left','0'),'.png']));
     %tmp=rgb2gray(imread(['../Images/Input/3dsmax_doubledoor/doubledoor_frame',pad(num2str(t_tmp-1),4,'left','0'),'.png']));
     %tmp=rgb2gray(imread(['../Images/Input/3dsmax_dolfin/bird_only_easy_frame',pad(num2str(t_tmp-1),4,'left','0'),'.png']));
-    %%
+    %tmp=rgb2gray(imread(['../Images/Input/3dsmax_pen/pen_only_frame',pad(num2str(t_tmp-1),4,'left','0'),'.png']));
+    %tmp=rgb2gray(imread(['../Images/Input/3dsmax_newspaper/newspaper_pen',pad(num2str(t_tmp-1),4,'left','0'),'.png']));
+    %tmp=rgb2gray(imread(['../Images/Input/3dsmax_newspaper/newspaper_pen_mouse',pad(num2str(t_tmp-1),4,'left','0'),'.png']));
+    %tmp=rgb2gray(imread(['../Images/Input/3dsmax_newspaper/newspaper_frame',pad(num2str(t_tmp-1),4,'left','0'),'.png']));
+    tmp=rgb2gray(imread(['../Images/Input/3dsmax_hasami/hasami_frame',pad(num2str(t_tmp-1),4,'left','0'),'.png']));
+   %%
     Imgs(:,:,t_tmp)=imresize(tmp(1:end,1:end),SIZE,'bicubic');
 end
 %%%%%%%%%%%%% Main St%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
