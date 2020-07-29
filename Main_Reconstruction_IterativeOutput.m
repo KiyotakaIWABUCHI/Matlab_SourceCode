@@ -18,7 +18,6 @@ Cycle_update=1; %car he2
 rank_num=1;
 %% Previously Heatmap param
 Th_HeatMap=0.0;
-
 %% Heatmap_diff
 K_sigmoid_centor=10;
 STEP_sigmoid=0.5;
@@ -34,7 +33,7 @@ CHI_Sum=zeros(256,256,10);
 Obj='car_bus_heri'
 %Obj='doubledoor'
 %Obj='bird'
-%%
+
 for i=0:9
     load(['../Images/Output/',Obj,'/IterativeOutput_',num2str(i+1),'times_bitplaneStyle']);
     load(['../Images/Output/',Obj,'/HeatMap_',num2str(i+1),'times_bitplaneStyle']);
@@ -108,7 +107,7 @@ for i=0:9
     % ç≈è¨chi2çXêV
     min_chi_array=double(min_chi_array>CHI_Maps(:,:,i+1)).*CHI_Maps(:,:,i+1)+double(min_chi_array<=CHI_Maps(:,:,i+1)).*min_chi_array;
 end
-
+%% rank
 w_total_rank=zeros(SIZE);
 img_result_rank=zeros(SIZE);
 w_tmp_rank=0;
@@ -130,7 +129,6 @@ imshow(uint8(img_result_rank./w_total_rank))
 img_min_chi=img_result_rank./w_total_rank;
 
 %% Using Previously Heatmap > Th
-
 img_result_PrevHeatMap=zeros(SIZE);
 w_total_PrevHeatMap=zeros(SIZE);
 
@@ -146,7 +144,6 @@ imshow(uint8(img_result_PrevHeatMap./w_total_PrevHeatMap))
 %% test Ç†Ç∆Ç≈è¡ãé
 img_result_test=zeros(SIZE);
 w_total_test=zeros(SIZE);
-
 for i=0:4:4
     w_tmp_test=exp(double(-(CHI_Maps(:,:,i+1)))/sigma_chi);
     img_result_test=img_result_test+w_tmp_test.*double(imgs(:,:,i+1));
