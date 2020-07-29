@@ -9,23 +9,30 @@ alpha=2; %0.4                    %paramater for contralling incident photon
 SIZE=[256 256];
 Down_Sample_Rate_Reconstruction=1;
 %%
-sigma_chi=10;
+sigma_chi=1;
 %% chi update ver param
 Kernel_size=3; %10 dolfine %car heri 3
-sigma=50; %100
-Cycle_update=3; %car he2
+sigma=100; %100
+Cycle_update=1; %car he2
 %% Rank Min reconst param
 rank_num=1;
 %% Previously Heatmap param
 Th_HeatMap=0.0;
 
+%% Heatmap_diff
+K_sigmoid_centor=10;
+STEP_sigmoid=0.5;
+K_DIV=2;
 %%
 bitplanes=zeros(256,256,256,10);
 CHI_Maps=zeros(256,256,10);
 HeatMaps=zeros(256,256,10);
 CHI_Sum=zeros(256,256,10);
 %% Obj Selection
-Obj='test'
+%Obj='test'
+%Obj='toyplane'
+Obj='car_bus_heri'
+%Obj='doubledoor'
 %Obj='bird'
 %%
 for i=0:9
@@ -43,7 +50,7 @@ for i=0:9
   figure
   imshow(uint8(CHI_Maps(:,:,i+1)*5))
 end
- 
+ imwrite(uint8(CHI_Maps(:,:,1)*3),['../Images/Output/',Obj,'/ChiMap_Noisy.png'])
 %% chi no update ver
 
 img_result_no_update=zeros(SIZE);
@@ -86,6 +93,7 @@ end
 
 figure('Name','exp_weight_image_update')
 imshow(uint8(img_result./w_total))
+img_WeightedIntegtion_all=img_result./w_total;
 
 %% reconstruction Min
 [Chis_sort,rank_order]=sort(CHI_Maps,3);
@@ -119,6 +127,7 @@ end
 
 figure('Name','exp_weight_rank_image_update')
 imshow(uint8(img_result_rank./w_total_rank))
+img_min_chi=img_result_rank./w_total_rank;
 
 %% Using Previously Heatmap > Th
 
@@ -146,9 +155,11 @@ end
 figure('Name','exp weight test ')
 imshow(uint8(img_result_test./w_total_test))
 %% Ref Neighbor Pixel
-Kernel_i=7;
-Kernel_j=7;
+Kernel_i=3;
+Kernel_j=3;
 img_result_Neighbor=zeros(SIZE);
+Frame_Num_Neiber=zeros(SIZE);
+Frame_Num_Centor=zeros(SIZE);
 for i=1+Kernel_i:SIZE(1)-Kernel_i
     for j=1+Kernel_j:SIZE(2)-Kernel_j
         cost_min_Neighbor=realmax;
@@ -166,10 +177,17 @@ for i=1+Kernel_i:SIZE(1)-Kernel_i
             end         
         end
         w_neighbor=exp(double(-(CHI_Maps(i,j,c_Neighbor)))/sigma_chi);
-        w_centor=exp(double(-(CHI_Maps(i,j,c_Neighbor)))/sigma_chi);
+        w_centor=exp(double(-(CHI_Maps(i,j,c_Neighbor)))/sigma_chi)*0;
         img_result_Neighbor(i,j)=w_neighbor*double(imgs(i,j,c_Neighbor))+w_centor*double(imgs(i,j,c_centor));
         img_result_Neighbor(i,j)=img_result_Neighbor(i,j)/(w_neighbor+w_centor);
+        Frame_Num_Neiber(i,j)=c_Neighbor;
+        Frame_Num_Centor(i,j)=c_centor;
     end
 end
 figure('Name','exp weight Neighber ')
 imshow(uint8(img_result_Neighbor))
+%%
+imwrite(uint8(img_WeightedIntegtion_all),['../Images/Output/',Obj,'/ReconstractedImage_WeightedIntegration.png'])
+imwrite(uint8(img_min_chi),['../Images/Output/',Obj,'/ReconstractedImage_MinumumChiMap.png'])
+%imwrite(uint8(img_result_test./w_total_test),['../Images/Output/',Obj,'/Ideal_2frame.png'])
+imwrite(uint8(CHI_Maps(:,:,1)*3),['../Images/Output/',Obj,'/ChiMap_Denoise.png'])

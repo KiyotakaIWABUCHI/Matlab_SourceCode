@@ -13,9 +13,9 @@ SIZE=[256 256];
 %% parameter ME Prop.
 down_sample_rate=1;
 Down_Sample_Rate_Grav=2;
-Range_x=[-20 20 4]; %[start end] 刻み range_x=[-40 40 4]; dolfine car_bus bird
+Range_x=[-20 20 2]; %[start end] 刻み range_x=[-40 40 4]; dolfine car_bus bird
 Range_y=[-0 0 4]; %range_y=[-20 20 4]; dolfin car_bus bird
-Range_rotate=[-20 20 4]; %なし
+Range_rotate=[-0 0 4]; %なし
 Range_scale=[0 0 10]; %なし
 
 %% Iterative Loop Num
@@ -37,8 +37,12 @@ for t_tmp=1:output_subframe_number
     %tmp=rgb2gray(imread(['../Images/Input/3dsmax_newspaper/newspaper_pen',pad(num2str(t_tmp-1),4,'left','0'),'.png']));
     %tmp=rgb2gray(imread(['../Images/Input/3dsmax_newspaper/newspaper_pen_mouse',pad(num2str(t_tmp-1),4,'left','0'),'.png']));
     %tmp=rgb2gray(imread(['../Images/Input/3dsmax_newspaper/newspaper_frame',pad(num2str(t_tmp-1),4,'left','0'),'.png']));
-    tmp=rgb2gray(imread(['../Images/Input/3dsmax_hasami/hasami_frame',pad(num2str(t_tmp-1),4,'left','0'),'.png']));
-   %%
+    %tmp=rgb2gray(imread(['../Images/Input/3dsmax_hasami/hasami_frame',pad(num2str(output_subframe_number-t_tmp),4,'left','0'),'.png']));
+    %tmp=rgb2gray(imread(['../Images/Input/3dsmax_newspaper/newspaper_toyplane_frame',pad(num2str(t_tmp-1),4,'left','0'),'.png']));
+    %tmp=rgb2gray(imread(['../Images/Input/3dsmax_newspaper/book_toyplane_frame',pad(num2str(t_tmp-1),4,'left','0'),'.png']));
+    %tmp=rgb2gray(imread(['../Images/Input/3dsmax_newspaper/newspaper_car_frame',pad(num2str(t_tmp-1),4,'left','0'),'.png']));
+    tmp=rgb2gray(imread(['../Images/Input/3dsmax_doubledoor/doubledoor_frame',pad(num2str(t_tmp-1),4,'left','0'),'.png']));
+    %%
     Imgs(:,:,t_tmp)=imresize(tmp(1:end,1:end),SIZE,'bicubic');
 end
 %%%%%%%%%%%%% Main St%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -61,7 +65,7 @@ for i=0:T_LOOP-1
     %% ROI Map Update  
     [chi_2D]=Function_Module_Chi2MapCul(bitplane_MC,Down_Sample_Rate_MapUpdate);
     chi_2D=imresize(chi_2D,SIZE,'bicubic');   
-    %%%%%%%%%%%%%%% 逆シグモイド %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %%%%%%%%%%%%%%% 逆シグモイド %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     sigmoid=(ones(size(chi_2D))./(1+exp(-(chi_2D-K_sigmoid_centor)/K_DIV)));
     Heat_map=Heat_map-STEP_sigmoid*(1-sigmoid);
     Heat_map=double(Heat_map>=0).*Heat_map;
@@ -70,5 +74,4 @@ for i=0:T_LOOP-1
     save(['../Images/Output/test/IterativeOutput_',num2str(i+1),'times_bitplaneStyle'],'bitplane_MC')
     imwrite(uint8(Function_Reconstruction_SUM(bitplane_MC)),['../Images/Output/test/IterativeOutput_',num2str(i+1),'times.png'])
 end
-%%%%%%%%%%%%% Main
-%%%%%%%%%%%%% End %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%% Main End %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
