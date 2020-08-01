@@ -10,7 +10,7 @@ alpha=2; %0.4                    %paramater for contralling incident photon
 block_size_MLE=10;
 SIZE=[256 256];
 Measurement_Excel=zeros(1,1,1);
-for t=1:10
+for t=1:1
     cnt_excel_seet=0;
     for Mov_tmp=10:10:30
         cnt_excel_seet=cnt_excel_seet+1;
@@ -38,7 +38,7 @@ for t=1:10
         Map_update_Step=0.5; %注意 Resolution測定時，パラメータ
         
         %% Map Update
-        Down_Sample_Rate_MapUpdate=0;
+        Down_Sample_Rate_MapUpdate=1;
         K_sigmoid_centor=10;
         %STEP_sigmoid=0.5; %注意 Resolution測定時，Map指定のためコメントアウト
         K_DIV=0.5; %注意0.5はほぼ閾値判定
@@ -52,7 +52,7 @@ for t=1:10
             Measurement_Excel(cnt_obj_size+t,1,cnt_excel_seet)=Obj_Target_Size_tmp; % CSV
             
             cnt_Map_step=0; % Count Initialize
-            for Map_update_Step_inv=0:0.1:1
+            for Map_update_Step_inv=0.5:0.5
                 dsp=[Mov_tmp Obj_Target_Size_tmp Map_update_Step_inv]
                 cnt_Map_step=cnt_Map_step+1;
                 
@@ -81,9 +81,11 @@ for t=1:10
                     chi_2D=imresize(chi_2D,SIZE,'bicubic');
                     
                     %%%%%%%%%%%%%%% 逆シグモイド %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                    imwrite(uint8(Heat_map*255),['../Images/Output/Resolution_HeatMap/HeatMap_Mov',num2str(Mov_tmp),'.png'])
                     sigmoid=(ones(size(chi_2D))./(1+exp(-(chi_2D-K_sigmoid_centor)/K_DIV)));
                     Heat_map=Heat_map-Map_update_Step*(1-sigmoid);
                     Heat_map=double(Heat_map>=0).*Heat_map;
+                   
                     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
                     
                     Error=sum(abs(Mov_target-[Estimation_y Estimation_x]));
@@ -94,7 +96,7 @@ for t=1:10
                 
                 %%% Measurement Result %%%%%%%%%%%%%
                 Measurement_Excel(cnt_obj_size+t,cnt_Map_step+1,cnt_excel_seet)=Error_min;
-                csvwrite(['../csv/tmp/Mov',num2str(Mov_tmp),'_Mov_vs_HeatMapWeight_ObjStop.csv'],Measurement_Excel(:,:,cnt_excel_seet));
+                %csvwrite(['../csv/tmp/Mov',num2str(Mov_tmp),'_Mov_vs_HeatMapWeight_ObjStop.csv'],Measurement_Excel(:,:,cnt_excel_seet));
             end
         end
     end
