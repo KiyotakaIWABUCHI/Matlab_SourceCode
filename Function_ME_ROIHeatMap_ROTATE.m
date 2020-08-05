@@ -105,8 +105,8 @@ for jshift=Range_x(1):Range_x(3):Range_x(2) %-60:20
                 if(cost_min>Total_cost)
                     bitplane_MC=tmp_bitplane;
                     cost_min=Total_cost;
-                    Estimation_x=x;
-                    Estimation_y=y;
+                    Estimation_x(:,:)=jshift;
+                    Estimation_y(:,:)=ishift;
                 end
                 
                 %imshow(uint8(function_reconstruced_SUM(bitplane_MC)))

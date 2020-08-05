@@ -27,18 +27,24 @@ bitplanes=zeros(256,256,256,10);
 CHI_Maps=zeros(256,256,10);
 HeatMaps=zeros(256,256,10);
 CHI_Sum=zeros(256,256,10);
+ME_results=zeros(2,10);
+%%
+Verosity=-36;
 %% Obj Selection
-%Obj='test'
+Obj='test'
 %Obj='toyplane'
-Obj='car_bus_heri'
+%Obj='car_bus_heri'
 %Obj='doubledoor'
 %Obj='bird'
 
 for i=0:9
     load(['../Images/Output/',Obj,'/IterativeOutput_',num2str(i+1),'times_bitplaneStyle']);
     load(['../Images/Output/',Obj,'/HeatMap_',num2str(i+1),'times_bitplaneStyle']);
+    load(['../Images/Output/',Obj,'/Iterative_ME_Result_',num2str(i+1),'times']);
     bitplanes(:,:,:,i+1)=bitplane_MC;
     HeatMaps(:,:,i+1)=Heat_map;
+    ME_results(1,i+1)=mean(mean(ME_Result(:,:,1)));
+    ME_results(2,i+1)=mean(mean(ME_Result(:,:,2)));
     [img_norm,img]=Function_Reconstruction_SUM(bitplane_MC);
 %     figure
 %     imshow(uint8(img))
@@ -51,7 +57,6 @@ for i=0:9
 end
  imwrite(uint8(CHI_Maps(:,:,1)*3),['../Images/Output/',Obj,'/ChiMap_Noisy.png'])
 %% chi no update ver
-
 img_result_no_update=zeros(SIZE);
 w_total=zeros(SIZE);
 for i=0:9
@@ -75,8 +80,7 @@ for f_num=1:10
     end
 end
 
-%% reconstruction
-
+%% Reconstruction
 img_result=zeros(SIZE);
 w_total=zeros(SIZE);
 imgs=zeros(SIZE(1),SIZE(2),11);
@@ -84,17 +88,22 @@ for i=0:9
     i_tmp=i+1;
     [tmp_norm,img]=Function_Reconstruction_SUM(bitplanes(:,:,:,i_tmp));
     imgs(:,:,i_tmp)=double(img);
+    img_resize=imresize(img,0.5,'bilinear');
+    img_resize=imresize(img_resize,SIZE,'bilinear');
+    %% 特定の速度以外をぼかす
+    if(ME_results(1,i_tmp)~=Verosity)
+        imgs(:,:,i_tmp)=img_resize;
+    end
     w_tmp=exp(double(-CHI_Maps(:,:,i+1))/sigma_chi);
     img_result=img_result+w_tmp.*double(img);
     w_total=w_total+w_tmp;
-    
 end
 
 figure('Name','exp_weight_image_update')
 imshow(uint8(img_result./w_total))
 img_WeightedIntegtion_all=img_result./w_total;
 
-%% reconstruction Min
+%% Reconstruction Min
 [Chis_sort,rank_order]=sort(CHI_Maps,3);
 min_chi_array=ones(size(w_total))*realmax;
 img_result_min=zeros(size(w_total));
@@ -107,7 +116,7 @@ for i=0:9
     % 最小chi2更新
     min_chi_array=double(min_chi_array>CHI_Maps(:,:,i+1)).*CHI_Maps(:,:,i+1)+double(min_chi_array<=CHI_Maps(:,:,i+1)).*min_chi_array;
 end
-%% rank
+%% Rank
 w_total_rank=zeros(SIZE);
 img_result_rank=zeros(SIZE);
 w_tmp_rank=0;
