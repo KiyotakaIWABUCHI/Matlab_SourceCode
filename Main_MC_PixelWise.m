@@ -9,21 +9,15 @@ q=1;                        %threashold
 alpha=2; %0.4               %paramater for contralling incident photon
 block_size_MLE=10;
 SIZE=[256 256];
-%% parameter MD Prop.
-Down_Sample_Rate_MD=1;
-Th_MD=10;
-Th_Min_Label=10;
-Opening_time=5;
-
 %% parameter ME Prop.
 down_sample_rate=1;
 Down_Sample_Rate_Grav=2;
 Range_x=[-40 40 4]; %[start end] ‚Ý range_x=[-40 40 4]; dolfine car_bus bird
-Range_y=[-0 0 4]; %range_y=[-20 20 4]; dolfin car_bus bird
+Range_y=[-0 0 2]; %range_y=[-20 20 4]; dolfin car_bus bird
 Range_rotate=[0 0 2]; %‚È‚µ
 Range_scale=[0 0 10]; %‚È‚µ
 %% Max Kernel Size => for k=0:2:K
-K = 6;
+K = 5;
 
 %% Read Images
 Imgs=zeros(SIZE(1),SIZE(2),output_subframe_number);
@@ -42,6 +36,7 @@ for t_tmp=1:output_subframe_number
     %tmp=rgb2gray(imread(['../Images/Input/3dsmax_newspaper/book_toyplane_frame',pad(num2str(t_tmp-1),4,'left','0'),'.png']));
     %tmp=rgb2gray(imread(['../Images/Input/3dsmax_newspaper/newspaper_car_frame',pad(num2str(t_tmp-1),4,'left','0'),'.png']));
     %tmp=rgb2gray(imread(['../Images/Input/3dsmax_doubledoor/doubledoor_frame',pad(num2str(t_tmp-1),4,'left','0'),'.png']));
+     tmp=rgb2gray(imread(['../Images/Input/3dsmax_CarBusHeri/car_bus_heri_frame',pad(num2str(t_tmp-1),4,'left','0'),'.png']));
     %%
     Imgs(:,:,t_tmp)=imresize(tmp(1:end,1:end),SIZE,'bicubic');
 end
@@ -52,7 +47,7 @@ tmp=Function_Reconstruction_SUM(bitplanes);
 imshow(uint8(tmp))
 
 %% Motion Estimation Pixel Wise Search
-for k=0:2:K
+for k=0:1:K
     Kernel_Space=2*k+1;
     [bitplane_MC,Estimation_x,Estimation_y]=Function_ME_PixelWise(bitplanes,Range_x,Range_y,Kernel_Space);
     [non,img_output]=Function_Reconstruction_SUM(bitplane_MC);

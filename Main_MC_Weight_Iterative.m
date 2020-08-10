@@ -13,25 +13,25 @@ SIZE=[256 256];
 %% parameter ME Prop.
 down_sample_rate=1;
 Down_Sample_Rate_Grav=2;
-Range_x=[-40 40 4]; %[start end] 刻み range_x=[-40 40 4]; dolfine car_bus bird
-Range_y=[-0 0 4]; %range_y=[-20 20 4]; dolfin car_bus bird
+Range_x=[-50 50 2]; %[start end] 刻み range_x=[-40 40 4]; dolfine car_bus bird
+Range_y=[-20 20 2]; %range_y=[-20 20 4]; dolfin car_bus bird
 Range_rotate=[0 0 2]; %なし
 Range_scale=[0 0 10]; %なし
 
 %% Iterative Loop Num
-T_LOOP=10;  %注意 Resolution測定時，1
+T_LOOP=15;  %注意 Resolution測定時，1
 
 %% Map Update
 Down_Sample_Rate_MapUpdate=1;
 K_sigmoid_centor=10;
-STEP_sigmoid=0.5; %注意 Resolution測定時，Map指定のためコメントアウト
-K_DIV=2; %注意0.5はほぼ閾値判定
+STEP_sigmoid=0.2; %注意 Resolution測定時，Map指定のためコメントアウト
+K_DIV=0.5; %注意0.5はほぼ閾値判定
 %% Read Images
 Imgs=zeros(SIZE(1),SIZE(2),output_subframe_number);
 ME_Result=zeros(SIZE(1),SIZE(2),2);
 for t_tmp=1:output_subframe_number
     %% Choise Images
-    tmp=rgb2gray(imread(['../Images/Input/3dsmax_car_bus_heri/car_bus_heri_frame',pad(num2str(t_tmp-1),4,'left','0'),'.png']));
+    %tmp=rgb2gray(imread(['../Images/Input/3dsmax_car_bus_heri/car_bus_heri_frame',pad(num2str(t_tmp-1),4,'left','0'),'.png']));
     %tmp=rgb2gray(imread(['../Images/Input/3dsmax_doubledoor/doubledoor_frame',pad(num2str(t_tmp-1),4,'left','0'),'.png']));
     %tmp=rgb2gray(imread(['../Images/Input/3dsmax_dolfin/bird_only_easy_frame',pad(num2str(t_tmp-1),4,'left','0'),'.png']));
     %tmp=rgb2gray(imread(['../Images/Input/3dsmax_pen/pen_only_frame',pad(num2str(t_tmp-1),4,'left','0'),'.png']));
@@ -43,6 +43,8 @@ for t_tmp=1:output_subframe_number
     %tmp=rgb2gray(imread(['../Images/Input/3dsmax_newspaper/book_toyplane_frame',pad(num2str(t_tmp-1),4,'left','0'),'.png']));
     %tmp=rgb2gray(imread(['../Images/Input/3dsmax_newspaper/newspaper_car_frame',pad(num2str(t_tmp-1),4,'left','0'),'.png']));
     %tmp=rgb2gray(imread(['../Images/Input/3dsmax_doubledoor/doubledoor_frame',pad(num2str(t_tmp-1),4,'left','0'),'.png']));
+    %tmp=rgb2gray(imread(['../Images/Input/3dsmax_wolf/wolf_frame',pad(num2str(t_tmp-1),4,'left','0'),'.png']));
+    tmp=rgb2gray(imread(['../Images/Input/3dsmax_CarBusHeri/car_bus_heri_frame',pad(num2str(t_tmp-1),4,'left','0'),'.png']));
     %%
     Imgs(:,:,t_tmp)=imresize(tmp(1:end,1:end),SIZE,'bicubic');
 end

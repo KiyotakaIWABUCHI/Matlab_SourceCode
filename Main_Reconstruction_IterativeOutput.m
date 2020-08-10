@@ -7,11 +7,11 @@ min_photon_number=0;        %Min number of total incident photon
 q=1;                     %threashold
 alpha=2; %0.4                    %paramater for contralling incident photon
 SIZE=[256 256];
-Down_Sample_Rate_Reconstruction=1;
+Down_Sample_Rate_Reconstruction=2;
 %%
 sigma_chi=1;
 %% chi update ver param
-Kernel_size=3; %10 dolfine %car heri 3
+Kernel_size=5; %10 dolfine %car heri 3
 sigma=100; %100
 Cycle_update=1; %car he2
 %% Rank Min reconst param
@@ -91,9 +91,9 @@ for i=0:9
     img_resize=imresize(img,0.5,'bilinear');
     img_resize=imresize(img_resize,SIZE,'bilinear');
     %% “Á’è‚Ì‘¬“xˆÈŠO‚ð‚Ú‚©‚·
-    if(ME_results(1,i_tmp)~=Verosity)
-        imgs(:,:,i_tmp)=img_resize;
-    end
+%     if(ME_results(1,i_tmp)==Verosity)
+%         imgs(:,:,i_tmp)=img_resize;
+%     end
     w_tmp=exp(double(-CHI_Maps(:,:,i+1))/sigma_chi);
     img_result=img_result+w_tmp.*double(img);
     w_total=w_total+w_tmp;
