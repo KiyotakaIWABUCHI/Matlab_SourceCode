@@ -9,7 +9,7 @@ alpha=2; %0.4                    %paramater for contralling incident photon
 SIZE=[256 256];
 Down_Sample_Rate_Reconstruction=2;
 %%
-sigma_chi=1;
+sigma_chi=2;
 %% chi update ver param
 Kernel_size=5; %10 dolfine %car heri 3
 sigma=100; %100
@@ -23,11 +23,13 @@ K_sigmoid_centor=10;
 STEP_sigmoid=0.5;
 K_DIV=2;
 %%
-bitplanes=zeros(256,256,256,10);
-CHI_Maps=zeros(256,256,10);
-HeatMaps=zeros(256,256,10);
-CHI_Sum=zeros(256,256,10);
-ME_results=zeros(2,10);
+Loop_Num=10;
+%%
+bitplanes=zeros(256,256,256,Loop_Num);
+CHI_Maps=zeros(256,256,Loop_Num);
+HeatMaps=zeros(256,256,Loop_Num);
+CHI_Sum=zeros(256,256,Loop_Num);
+ME_results=zeros(2,Loop_Num);
 %%
 Verosity=-36;
 %% Obj Selection
@@ -37,7 +39,7 @@ Obj='test'
 %Obj='doubledoor'
 %Obj='bird'
 
-for i=0:9
+for i=0:Loop_Num-1
     load(['../Images/Output/',Obj,'/IterativeOutput_',num2str(i+1),'times_bitplaneStyle']);
     load(['../Images/Output/',Obj,'/HeatMap_',num2str(i+1),'times_bitplaneStyle']);
     load(['../Images/Output/',Obj,'/Iterative_ME_Result_',num2str(i+1),'times']);
@@ -59,7 +61,7 @@ end
 %% chi no update ver
 img_result_no_update=zeros(SIZE);
 w_total=zeros(SIZE);
-for i=0:9
+for i=0:Loop_Num-1
     [img_norm,img]=Function_Reconstruction_SUM(bitplanes(:,:,:,i+1));
     img=double(img);
     w_tmp=exp(double(-CHI_Maps(:,:,i+1))/sigma_chi);
@@ -70,7 +72,7 @@ figure('Name','exp_weight_image_chi_no_update')
 imshow(uint8(img_result_no_update./w_total))
 
 %% chi map update
-for f_num=1:10
+for f_num=1:Loop_Num
     for update_cycle=1:Cycle_update
         [image_pint_norm,image_pint]=Function_Reconstruction_SUM(bitplanes(:,:,:,f_num));
         chi_map_pint=CHI_Maps(:,:,f_num);
@@ -83,8 +85,8 @@ end
 %% Reconstruction
 img_result=zeros(SIZE);
 w_total=zeros(SIZE);
-imgs=zeros(SIZE(1),SIZE(2),11);
-for i=0:9
+imgs=zeros(SIZE(1),SIZE(2),Loop_Num);
+for i=0:Loop_Num-1
     i_tmp=i+1;
     [tmp_norm,img]=Function_Reconstruction_SUM(bitplanes(:,:,:,i_tmp));
     imgs(:,:,i_tmp)=double(img);
@@ -109,7 +111,7 @@ min_chi_array=ones(size(w_total))*realmax;
 img_result_min=zeros(size(w_total));
 chi_rank=zeros(SIZE(1),SIZE(2),rank_num);
 
-for i=0:9
+for i=0:Loop_Num-1
     [tmp_norm,img]=Function_Reconstruction_SUM(bitplanes(:,:,:,i+1));
     img_result_min=double(min_chi_array>CHI_Maps(:,:,i+1)).*double(img)+double(min_chi_array<=CHI_Maps(:,:,i+1)).*img_result_min;
        
@@ -141,7 +143,7 @@ img_min_chi=img_result_rank./w_total_rank;
 img_result_PrevHeatMap=zeros(SIZE);
 w_total_PrevHeatMap=zeros(SIZE);
 
-for i=0:9
+for i=0:Loop_Num-1
     HeatMap_upperTh=double(HeatMaps(:,:,i+1)<=Th_HeatMap);
     w_tmp_PrevHeatMap=exp(double(-(HeatMap_upperTh*realmax+CHI_Maps(:,:,i+1)))/sigma_chi);
     img_result_PrevHeatMap=img_result_PrevHeatMap+w_tmp_PrevHeatMap.*double(imgs(:,:,i+1));
