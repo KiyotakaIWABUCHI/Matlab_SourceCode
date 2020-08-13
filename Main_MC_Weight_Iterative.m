@@ -14,7 +14,7 @@ SIZE=[256 256];
 down_sample_rate=1;
 Down_Sample_Rate_Grav=2;
 Range_x=[-0 0 2]; %[start end] çèÇ› range_x=[-40 40 4]; dolfine car_bus bird
-Range_y=[-40 40 4]; %range_y=[-20 20 4]; dolfin car_bus bird
+Range_y=[-50 50 2]; %range_y=[-20 20 4]; dolfin car_bus bird
 Range_rotate=[-20 20 2]; %Ç»Çµ
 Range_scale=[0 0 10]; %Ç»Çµ
 
@@ -46,7 +46,8 @@ for t_tmp=1:output_subframe_number
     %tmp=rgb2gray(imread(['../Images/Input/3dsmax_wolf/wolf_frame',pad(num2str(t_tmp-1),4,'left','0'),'.png']));
     %tmp=rgb2gray(imread(['../Images/Input/3dsmax_CarBusHeri/car_bus_heri_frame',pad(num2str(t_tmp-1),4,'left','0'),'.png']));
     %tmp=rgb2gray(imread(['../Images/Input/3dsmax_traffic/traffic_frame',pad(num2str(t_tmp-1),4,'left','0'),'.png']));
-    tmp=rgb2gray(imread(['../Images/Input/3dsmax_animal/animal_frame',pad(num2str(t_tmp-1),4,'left','0'),'.png']));
+    %tmp=rgb2gray(imread(['../Images/Input/3dsmax_animal/animal_frame',pad(num2str(t_tmp-1),4,'left','0'),'.png']));
+    tmp=rgb2gray(imread(['../Images/Input/3dsmax_animal/eagle_frame',pad(num2str(t_tmp-1),4,'left','0'),'.png']));
 
     
     %%
