@@ -13,7 +13,7 @@ SIZE=[256 256];
 down_sample_rate=1;
 Down_Sample_Rate_Grav=2;
 Range_x=[-50 50 2]; %[start end] ‚Ý range_x=[-40 40 4]; dolfine car_bus bird
-Range_y=[-20 20 2]; %range_y=[-20 20 4]; dolfin car_bus bird
+Range_y=[-50 50 2]; %range_y=[-20 20 4]; dolfin car_bus bird
 Range_rotate=[-0 0 2]; %‚È‚µ
 Range_scale=[0 0 10]; %‚È‚µ
 %% Max Kernel Size => for k=0:2:K
@@ -49,7 +49,8 @@ DC_rate=0; % DC_rate =>Dark Count Rate
 %tmp=Function_Reconstruction_SUM(bitplanes);
 %imshow(uint8(tmp))
 %% load bit-plane for Compare
-load('../Images/Output/IEEE_traffic/Original_bitplanes');
+%load('../Images/Output/IEEE_traffic/Original_bitplanes');
+load('../Images/Output/IEEE_animal/Original_bitplanes');
 
 %% Motion Estimation Pixel Wise Search
 for k=0:1:K

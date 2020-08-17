@@ -38,6 +38,7 @@ Obj='test'
 %Obj='car_bus_heri'
 %Obj='doubledoor'
 %Obj='bird'
+Obj='IEEE_traffic'
 
 for i=0:Loop_Num-1
     load(['../Images/Output/',Obj,'/IterativeOutput_',num2str(i+1),'times_bitplaneStyle']);
@@ -47,7 +48,8 @@ for i=0:Loop_Num-1
     HeatMaps(:,:,i+1)=Heat_map;
     ME_results(1,i+1)=mean(mean(ME_Result(:,:,1)));
     ME_results(2,i+1)=mean(mean(ME_Result(:,:,2)));
-    [img_norm,img]=Function_Reconstruction_SUM(bitplane_MC);
+    %[img_norm,img]=Function_Reconstruction_SUM(bitplane_MC);
+    [img]=Function_Reconstruction_MLE(bitplane_MC,alpha,q);
 %     figure
 %     imshow(uint8(img))
     
@@ -62,7 +64,8 @@ end
 img_result_no_update=zeros(SIZE);
 w_total=zeros(SIZE);
 for i=0:Loop_Num-1
-    [img_norm,img]=Function_Reconstruction_SUM(bitplanes(:,:,:,i+1));
+    %[img_norm,img]=Function_Reconstruction_SUM(bitplanes(:,:,:,i+1));
+    [img]=Function_Reconstruction_MLE(bitplanes(:,:,:,i+1),alpha,q);
     img=double(img);
     w_tmp=exp(double(-CHI_Maps(:,:,i+1))/sigma_chi);
     img_result_no_update=img_result_no_update+w_tmp.*img;
@@ -74,7 +77,8 @@ imshow(uint8(img_result_no_update./w_total))
 %% chi map update
 for f_num=1:Loop_Num
     for update_cycle=1:Cycle_update
-        [image_pint_norm,image_pint]=Function_Reconstruction_SUM(bitplanes(:,:,:,f_num));
+        %[image_pint_norm,image_pint]=Function_Reconstruction_SUM(bitplanes(:,:,:,f_num));
+        [image_pint]=Function_Reconstruction_MLE(bitplanes(:,:,:,f_num),alpha,q);
         chi_map_pint=CHI_Maps(:,:,f_num);
         %% ChiMap update process
         chi_map_pint_update=Function_GuideFilter_ChiMap_Update(image_pint,chi_map_pint,Kernel_size,sigma);
@@ -88,7 +92,8 @@ w_total=zeros(SIZE);
 imgs=zeros(SIZE(1),SIZE(2),Loop_Num);
 for i=0:Loop_Num-1
     i_tmp=i+1;
-    [tmp_norm,img]=Function_Reconstruction_SUM(bitplanes(:,:,:,i_tmp));
+    %[tmp_norm,img]=Function_Reconstruction_SUM(bitplanes(:,:,:,i_tmp));
+    [img]=Function_Reconstruction_MLE(bitplanes(:,:,:,i_tmp),alpha,q);
     imgs(:,:,i_tmp)=double(img);
     img_resize=imresize(img,0.5,'bilinear');
     img_resize=imresize(img_resize,SIZE,'bilinear');
@@ -112,7 +117,8 @@ img_result_min=zeros(size(w_total));
 chi_rank=zeros(SIZE(1),SIZE(2),rank_num);
 
 for i=0:Loop_Num-1
-    [tmp_norm,img]=Function_Reconstruction_SUM(bitplanes(:,:,:,i+1));
+    %[tmp_norm,img]=Function_Reconstruction_SUM(bitplanes(:,:,:,i+1));
+    [img]=Function_Reconstruction_MLE(bitplanes(:,:,:,i+1),alpha,q);
     img_result_min=double(min_chi_array>CHI_Maps(:,:,i+1)).*double(img)+double(min_chi_array<=CHI_Maps(:,:,i+1)).*img_result_min;
        
     % Å¬chi2XV
