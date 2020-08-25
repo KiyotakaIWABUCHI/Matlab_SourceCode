@@ -3,7 +3,7 @@ close all
 %%%%%%%%%%%%% Initializes St%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Garamater Public
 output_subframe_number=256; %number of bitplane image
-max_photon_number=10;       %Max number of total incident photon
+max_photon_number=1;       %Max number of total incident photon
 min_photon_number=0;        %Min number of total incident photon
 q=1;                        %threashold
 alpha=2; %0.4               %paramater for contralling incident photon
@@ -13,9 +13,9 @@ SIZE=[256 256];
 %% parameter ME Prop.
 down_sample_rate=1;
 Down_Sample_Rate_Grav=2;
-Range_x=[-0 0 2]; %[start end] çèÇ› range_x=[-40 40 4]; dolfine car_bus bird
-Range_y=[-50 50 2]; %range_y=[-20 20 4]; dolfin car_bus bird
-Range_rotate=[-20 20 2]; %Ç»Çµ
+Range_x=[-0 0 4]; %[start end] çèÇ› range_x=[-40 40 4]; dolfine car_bus bird
+Range_y=[-40 40 2]; %range_y=[-20 20 4]; dolfin car_bus bird eagle -50 50
+Range_rotate=[-20 20 2]; %Ç»Çµ eagle -20 20
 Range_scale=[0 0 10]; %Ç»Çµ
 
 %% Iterative Loop Num
@@ -47,9 +47,9 @@ for t_tmp=1:output_subframe_number
     %tmp=rgb2gray(imread(['../Images/Input/3dsmax_CarBusHeri/car_bus_heri_frame',pad(num2str(t_tmp-1),4,'left','0'),'.png']));
     %tmp=rgb2gray(imread(['../Images/Input/3dsmax_traffic/traffic_frame',pad(num2str(t_tmp-1),4,'left','0'),'.png']));
     %tmp=rgb2gray(imread(['../Images/Input/3dsmax_animal/animal_frame',pad(num2str(t_tmp-1),4,'left','0'),'.png']));
-    tmp=rgb2gray(imread(['../Images/Input/3dsmax_animal/eagle_frame',pad(num2str(t_tmp-1),4,'left','0'),'.png']));
-
-    
+    %tmp=rgb2gray(imread(['../Images/Input/3dsmax_animal/eagle_frame',pad(num2str(t_tmp-1),4,'left','0'),'.png']));
+    %tmp=rgb2gray(imread(['../Images/Input/3dsmax_limitation/limitation_frame',pad(num2str(t_tmp-1),4,'left','0'),'.png']));
+    tmp=rgb2gray(imread(['../Images/Input/3dsmax_sky/sky_frame',pad(num2str(t_tmp-1),4,'left','0'),'.png']));
     %%
     Imgs(:,:,t_tmp)=imresize(tmp(1:end,1:end),SIZE,'bicubic');
     

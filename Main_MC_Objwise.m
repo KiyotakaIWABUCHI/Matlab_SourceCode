@@ -3,7 +3,7 @@ close all
 %%%%%%%%%%%%% Initializes St%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Garamater Public
 output_subframe_number=256; %number of bitplane image
-max_photon_number=10;       %Max number of total incident photon
+max_photon_number=1;       %Max number of total incident photon
 min_photon_number=0;        %Min number of total incident photon
 q=1;                        %threashold
 alpha=2; %0.4               %paramater for contralling incident photon
@@ -13,13 +13,13 @@ SIZE=[256 256];
 Down_Sample_Rate_MD=1;
 Th_MD=10;
 Th_Min_Label=10; %“®‚«„’è‚ª¬Œ÷‚·‚éŠÏ“_‚©‚ç
-Opening_time=5;
+Opening_time=10;
 
 %% parameter ME Prop.
 down_sample_rate=1;
 Down_Sample_Rate_Grav=2;
 Range_x=[-0 0 2]; %[start end] ‚Ý range_x=[-40 40 4]; dolfine car_bus bird
-Range_y=[-50 50 2]; %range_y=[-20 20 4]; dolfin car_bus bird
+Range_y=[-40 40 2]; %range_y=[-20 20 4]; dolfin car_bus bird
 Range_rotate=[-20 20 2]; %‚È‚µ
 Range_scale=[0 0 10]; %‚È‚µ
 
@@ -43,7 +43,9 @@ for t_tmp=1:output_subframe_number
     %tmp=rgb2gray(imread(['../Images/Input/3dsmax_CarBusHeri/car_bus_heri_frame',pad(num2str(t_tmp-1),4,'left','0'),'.png']));
     %tmp=rgb2gray(imread(['../Images/Input/3dsmax_traffic/traffic_frame',pad(num2str(t_tmp-1),4,'left','0'),'.png']));
     %tmp=rgb2gray(imread(['../Images/Input/3dsmax_animal/animal_frame',pad(num2str(t_tmp-1),4,'left','0'),'.png']));
-    tmp=rgb2gray(imread(['../Images/Input/3dsmax_animal/eagle_frame',pad(num2str(t_tmp-1),4,'left','0'),'.png']));
+    %tmp=rgb2gray(imread(['../Images/Input/3dsmax_animal/eagle_frame',pad(num2str(t_tmp-1),4,'left','0'),'.png']));
+    tmp=rgb2gray(imread(['../Images/Input/3dsmax_limitation/limitation_frame',pad(num2str(t_tmp-1),4,'left','0'),'.png']));
+    %tmp=rgb2gray(imread(['../Images/Input/3dsmax_sky/sky_frame',pad(num2str(t_tmp-1),4,'left','0'),'.png']));
    
     %%
     Imgs(:,:,t_tmp)=imresize(tmp(1:end,1:end),SIZE,'bicubic');
@@ -55,10 +57,12 @@ DC_rate=0; % DC_rate =>Dark Count Rate
 % imshow(uint8(tmp))
 %% load bit-plane for Compare
 %load('../Images/Output/IEEE_traffic/Original_bitplanes');
-load('../Images/Output/IEEE_animal/Original_bitplanes');
+%%load('../Images/Output/IEEE_animal/Original_bitplanes');
+load('../Images/Output/IEEE_sky/Original_bitplanes');
+%load('../Images/Output/IEEE_limitation/Original_bitplanes');
 %%
 tmp_bitplane=bitplanes;
-for loop=1:3
+for loop=1:4
     %% Motion Detection
     [chi_2D]=Function_Module_Chi2MapCul(tmp_bitplane,Down_Sample_Rate_MD);
     chi_2D=imresize(chi_2D,SIZE,'bicubic');

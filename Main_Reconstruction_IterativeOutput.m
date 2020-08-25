@@ -2,7 +2,7 @@ clear
 close all
 %% paramater(all)
 output_subframe_number=256; %number of bitplane image
-max_photon_number=10;      %Max number of total incident photon
+max_photon_number=5;      %Max number of total incident photon
 min_photon_number=0;        %Min number of total incident photon
 q=1;                     %threashold
 alpha=2; %0.4                    %paramater for contralling incident photon
@@ -33,12 +33,14 @@ ME_results=zeros(2,Loop_Num);
 %%
 Verosity=-36;
 %% Obj Selection
-Obj='test'
+%Obj='test'
 %Obj='toyplane'
 %Obj='car_bus_heri'
 %Obj='doubledoor'
 %Obj='bird'
-Obj='IEEE_traffic'
+%Obj='IEEE_traffic'
+Obj='IEEE_sky'
+%Obj='IEEE_limitation'
 
 for i=0:Loop_Num-1
     load(['../Images/Output/',Obj,'/IterativeOutput_',num2str(i+1),'times_bitplaneStyle']);
