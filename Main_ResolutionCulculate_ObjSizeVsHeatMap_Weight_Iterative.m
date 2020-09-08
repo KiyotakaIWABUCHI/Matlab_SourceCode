@@ -3,14 +3,14 @@ close all
 %%%%%%%%%%%%% Initializes St%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Garamater Public
 output_subframe_number=256; %number of bitplane image
-max_photon_number=10;      %Max number of total incident photon
+max_photon_number=1;      %Max number of total incident photon
 min_photon_number=0;        %Min number of total incident photon
 q=1;                     %threashold
-alpha=2; %0.4                    %paramater for contralling incident photon
+alpha=1; %0.4                    %paramater for contralling incident photon
 block_size_MLE=10;
 SIZE=[256 256];
 Measurement_Excel=zeros(1,1,1);
-for t=1:10
+for t=1:100
     for Mov_tmp=10:10
         
         %% parameter ME Prop.
@@ -22,9 +22,9 @@ for t=1:10
         Range_scale=[0 0 10]; %なし
         
         %% Image Gen
-        Back_color=100;
-        Obj_color_back=200;
-        Obj_color_target=200;
+        Back_color=17.7;
+        Obj_color_back=177;
+        Obj_color_target=177;
         Obj_Back_Size=[100 100];
         %Obj_Target_Size=[80 80]; %注意 Resolution測定時，パラメータ
         Mov_back=[Mov_tmp 0];
@@ -44,14 +44,14 @@ for t=1:10
         
         %%%%%%%%%%%%% Main St%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         cnt_excel_seet=0;
-        for Obj_Target_Size_tmp=10:10:100
+        for Obj_Target_Size_tmp=5:5:100
             cnt_excel_seet=cnt_excel_seet+1;
             Obj_Target_Size=[Obj_Target_Size_tmp Obj_Target_Size_tmp];
             %Measurement_Excel(cnt_obj_size+1,1)=Obj_Target_Size_tmp; % CSV
             Measurement_Excel(t+1,1,cnt_excel_seet)=Obj_Target_Size_tmp; % CSV
             
             cnt_Map_step=0; % Count Initialize
-            for Map_update_Step_inv=0:0.1:1
+            for Map_update_Step_inv=0.25:0.25:1
                 dsp=[Mov_tmp Obj_Target_Size_tmp Map_update_Step_inv]
                 cnt_Map_step=cnt_Map_step+1;
                 
@@ -93,7 +93,7 @@ for t=1:10
                 
                 %%% Measurement Result %%%%%%%%%%%%%
                 Measurement_Excel(t+1,cnt_Map_step+1,cnt_excel_seet)=Error_min;
-                csvwrite(['../csv/tmp/ObjSize',num2str(Obj_Target_Size_tmp),'_ObjSize_vs_HeatMapWeight_Mov10.csv'],Measurement_Excel(:,:,cnt_excel_seet));
+                csvwrite(['../csv/tmp/IEEE20200908_ObjSize',num2str(Obj_Target_Size_tmp),'_ObjSize_vs_HeatMapWeight_Mov10.csv'],Measurement_Excel(:,:,cnt_excel_seet));
             end
         end
     end
