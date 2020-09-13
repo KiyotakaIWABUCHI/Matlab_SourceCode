@@ -33,13 +33,13 @@ ME_results=zeros(2,Loop_Num);
 %%
 Verosity=-36;
 %% Obj Selection
-%Obj='test'
+Obj='test'
 %Obj='toyplane'
 %Obj='car_bus_heri'
 %Obj='doubledoor'
 %Obj='bird'
 %Obj='IEEE_traffic'
-Obj='IEEE_sky'
+%Obj='IEEE_sky'
 %Obj='IEEE_limitation'
 
 for i=0:Loop_Num-1

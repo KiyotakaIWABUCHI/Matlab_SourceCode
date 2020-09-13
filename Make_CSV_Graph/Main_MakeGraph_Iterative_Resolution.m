@@ -1,7 +1,10 @@
 clear
 close all
-D=csvread('../../csv/ObjSize_vs_HeatMap2_025step.csv');
+D=csvread('../../csv/ObjSize_vs_HeatMap2_detail.csv');
+load('../../csv/IEEE/Resolution_array_Chiaxis_PhotonLevel')
 f=figure('Name','Resolution');
+%Measurement_mean=zeros(1,size(Measurement_Excel,2),size(Measurement_Excel,3))
+Measurement_mean=mean(Measurement_Excel(2:end,:,:),1);
 
 %f.Position=[403 106 460 400]
 Fsize=16
@@ -19,14 +22,14 @@ plot(D(1:end,1),D(1:end,3),'r-d','MarkerSize',6,'LineWidth',1.5,'MarkerFaceColor
 plot(D(1:end,1),D(1:end,4),'m-^','MarkerSize',6,'LineWidth',1.5,'MarkerFaceColor','m','MarkeredgeColor','m')
 plot(D(1:end,1),D(1:end,5),'c-v','MarkerSize',6,'LineWidth',1.5,'MarkerFaceColor','c','MarkeredgeColor','c')
 %plot(D(2:end,1),D(2:end,10),'c-v','MarkerSize',6,'MarkerFaceColor','c','MarkeredgeColor','c')
-axis([0.1 0.9 0 1]);
+axis([0.1 0.9 0 1.0]);
 %l.Box='off';
 %l.Location ='northoutside';
 h_axes = gca;
 h_axes.XAxis.FontSize = 14;
 h_axes.YAxis.FontSize = 14;
 h_axes.Position=[0.11 0.15 0.85 0.74];
-l=legend('Rate-of-Interest 0.25','0.5','0.75','1.0','Position',[170 300 100 1]);
+l=legend('Rate-of-Interest 1.5','2.0','4.0','10.0','Position',[170 300 100 1]);
 l.FontSize=16.0;
 %l.NumColumns=1;
 l.Orientation='horizontal';

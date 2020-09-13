@@ -3,19 +3,19 @@ close all
 %%
 alpha=2;
 q=1;
-Obj='IEEE_traffic'
+%Obj='IEEE_traffic'
 %Obj='IEEE_sky'
-%Obj='IEEE_limitation';
+Obj='IEEE_limitation';
 %% Original Bit-plane
 load(['../Images/Output/',Obj,'/Original_bitplanes']);
 %% GT
 GT=double(imread(['../Images/Output/',Obj,'/FirstFrameGroudTruth.png']));
-WP=[156 90];%traffic
-%WP=[30 116];%limitation
+%WP=[156 90];%traffic
+WP=[30 116];%limitation
 %WP=[9 75];%sky
-BP=[27 151];%traffic
+%BP=[27 151];%traffic
 %BP=[238 21];%limitation
-%BP=[183 38];%limitation
+BP=[183 38];%limitation
 %% Avg
 %[non,Avg_row]=Function_Reconstruction_SUM(bitplanes);
 Avg_row=Function_Reconstruction_MLE(bitplanes,alpha,q);
@@ -39,7 +39,7 @@ PixWiseK1_row=Function_Reconstruction_MLE(bitplane_MC,alpha,q);
 load(['../Images/Output/PixelWise/',Obj,'/PixWiseMC_KernelSize3_bitplaneStyle']);
 PixWiseK3_row=Function_Reconstruction_MLE(bitplane_MC,alpha,q);
 [PixWiseK3]=Function_WhiteBalanced(PixWiseK3_row,GT,Avg_row,WP,BP);
-load(['../Images/Output/PixelWise/',Obj,'/PixWiseMC_KernelSize7_bitplaneStyle']);
+load(['../Images/Output/PixelWise/',Obj,'/PixWiseMC_KernelSize9_bitplaneStyle']);
 PixWiseK7_row=Function_Reconstruction_MLE(bitplane_MC,alpha,q);
 [PixWiseK7]=Function_WhiteBalanced(PixWiseK7_row,GT,Avg_row,WP,BP);
 %% PSNR ‘S‘Ì
@@ -84,5 +84,5 @@ imwrite(uint8(Prop_Weight*Gain),['../IEEE_result/tex/',Obj,'/Proposed_Weight.png
 imwrite(uint8(ObjWise*Gain),['../IEEE_result/tex/',Obj,'/ObjWise.png'])
 imwrite(uint8(PixWiseK1*Gain),['../IEEE_result/tex/',Obj,'/PixWise.png'])
 imwrite(uint8(PixWiseK3*Gain),['../IEEE_result/tex/',Obj,'/BlockWise_3x3.png'])
-imwrite(uint8(PixWiseK7*Gain),['../IEEE_result/tex/',Obj,'/BlockWise_7x7.png'])
+imwrite(uint8(PixWiseK7*Gain),['../IEEE_result/tex/',Obj,'/BlockWise_9x9.png'])
 writetable(result_table,['../IEEE_result/tex/',Obj,'/Image_Quality.txt'])

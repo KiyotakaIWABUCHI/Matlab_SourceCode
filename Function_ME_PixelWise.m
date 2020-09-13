@@ -31,8 +31,8 @@ for x=range_x(1):range_x(3):range_x(2) %-60:20
         %now=y
         shift_per_bitplane_x=double(x)/(T-1);
         shift_per_bitplane_y=double(y)/(T-1);
-        y_margin=round(y/4);
-        x_margin=round(x/4);
+        y_margin=round(y);
+        x_margin=round(x);
         if(y<0)
             if(x_margin<0)
                yukou_range(1-y_margin:end,1-x_margin:end)=1; %まいなすならひだり部分，うえ部分
@@ -47,7 +47,7 @@ for x=range_x(1):range_x(3):range_x(2) %-60:20
             end
         end
         
-        
+        %imshow(uint8(yukou_range*255))
         for t=1:T
 %             dx=fix((t-1)*shift_per_bitplane_x);
 %             dy=fix((t-1)*shift_per_bitplane_y);
@@ -78,9 +78,36 @@ for x=range_x(1):range_x(3):range_x(2) %-60:20
        %% コスト計算
         [result_2D]=Function_Module_Chi2MapCul(tmp_bitplane,0);         
        %% 縮拡で近傍画素考慮
-        result_2D=imresize(result_2D,1/K,'bilinear');
-        result_2D=imresize(result_2D,[TATE YOKO],'bilinear');
-        result_2D = result_2D+double(1-yukou_range)*realmax/2;
+       if(y<0)
+            if(x<0)
+               A=result_2D(1-y_margin:end,1-x_margin:end); %まいなすならひだり部分，うえ部分
+            else
+               A=result_2D(1-y_margin:end,1:end-x_margin);
+            end
+        else
+            if(x<0)
+               A=result_2D(1:end-y_margin,1-x_margin:end); %まいなすならひだり部分，うえ部分
+            else
+               A=result_2D(1:end-y_margin,1:end-x_margin);
+            end
+        end
+        A_shulink=imresize(A,1/K,'bilinear');
+        result_2D_yukou=imresize(A_shulink,size(A),'bilinear');
+        result_2D(:,:)=realmax/2;
+       if(y<0)
+            if(x<0)
+               result_2D(1-y_margin:end,1-x_margin:end)=result_2D_yukou; %まいなすならひだり部分，うえ部分
+            else
+               result_2D(1-y_margin:end,1:end-x_margin)=result_2D_yukou;
+            end
+        else
+            if(x<0)
+               result_2D(1:end-y_margin,1-x_margin:end)=result_2D_yukou; %まいなすならひだり部分，うえ部分
+            else
+               result_2D(1:end-y_margin,1:end-x_margin)=result_2D_yukou;
+            end
+       end
+       %imshow(uint8(double(costmin>result_2D)*255))
        %% ビットプレーン更新
          tmp_3D=repmat(double(costmin>result_2D),[1 1 T]);
          bitplane_MC=tmp_3D.*tmp_bitplane+(1-tmp_3D).*bitplane_MC;
@@ -88,7 +115,7 @@ for x=range_x(1):range_x(3):range_x(2) %-60:20
          Estimation_x=double(costmin>result_2D)*x+double(costmin<=result_2D).*Estimation_x;
          Estimation_y=double(costmin>result_2D)*y+double(costmin<=result_2D).*Estimation_y;
         %% コスト更新
-        costmin=double(costmin>result_2D).*(result_2D)+double(costmin<result_2D).*(costmin);
+        costmin=double(costmin>result_2D).*(result_2D)+double(costmin<=result_2D).*(costmin);
         imshow(uint8(Function_Reconstruction_SUM(bitplane_MC)))
      end
 end

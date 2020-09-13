@@ -54,7 +54,7 @@ DC_rate=0; % DC_rate =>Dark Count Rate
 load('../Images/Output/IEEE_sky/Original_bitplanes');
 %load('../Images/Output/IEEE_limitation/Original_bitplanes');
 %% Motion Estimation Pixel Wise Search
-for k=0:1:K
+for k=1:K
     Kernel_Space=2*k+1;
     [bitplane_MC,Estimation_x,Estimation_y]=Function_ME_PixelWise(bitplanes,Range_x,Range_y,Kernel_Space);
     [non,img_output]=Function_Reconstruction_SUM(bitplane_MC);
