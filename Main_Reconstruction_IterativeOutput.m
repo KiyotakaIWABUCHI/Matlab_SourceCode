@@ -1,13 +1,10 @@
 clear
 close all
 %% paramater(all)
-output_subframe_number=256; %number of bitplane image
-max_photon_number=5;      %Max number of total incident photon
-min_photon_number=0;        %Min number of total incident photon
 q=1;                     %threashold
 alpha=2; %0.4                    %paramater for contralling incident photon
 SIZE=[256 256];
-Down_Sample_Rate_Reconstruction=2;
+Down_Sample_Rate_Reconstruction=1;
 %%
 sigma_chi=2;
 %% chi update ver param
@@ -18,12 +15,8 @@ Cycle_update=1; %car he2
 rank_num=1;
 %% Previously Heatmap param
 Th_HeatMap=0.0;
-%% Heatmap_diff
-K_sigmoid_centor=10;
-STEP_sigmoid=0.5;
-K_DIV=2;
 %%
-Loop_Num=10;
+Loop_Num=9;
 %%
 bitplanes=zeros(256,256,256,Loop_Num);
 CHI_Maps=zeros(256,256,Loop_Num);
@@ -33,14 +26,15 @@ ME_results=zeros(2,Loop_Num);
 %%
 Verosity=-36;
 %% Obj Selection
-Obj='test'
+Obj='test2'
 %Obj='toyplane'
 %Obj='car_bus_heri'
 %Obj='doubledoor'
 %Obj='bird'
 %Obj='IEEE_traffic'
-%Obj='IEEE_sky'
+%Obj='IEEE_sky_Z_chi'
 %Obj='IEEE_limitation'
+%Obj='IEEE_traffic_Z_chi'
 
 for i=0:Loop_Num-1
     load(['../Images/Output/',Obj,'/IterativeOutput_',num2str(i+1),'times_bitplaneStyle']);
@@ -180,7 +174,7 @@ for i=1+Kernel_i:SIZE(1)-Kernel_i
     for j=1+Kernel_j:SIZE(2)-Kernel_j
         cost_min_Neighbor=realmax;
         cost_min_centor=realmax;
-        for c=1:10
+        for c=1:Loop_Num
             cost_tmp=CHI_Maps(i,j,c);
             cost_Neighbor_tmp=sum(sum(CHI_Maps(i-Kernel_i:i+Kernel_i,j-Kernel_j:j+Kernel_j,c)));
             if(cost_min_Neighbor>cost_Neighbor_tmp)

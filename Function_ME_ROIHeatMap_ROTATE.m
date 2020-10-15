@@ -82,8 +82,7 @@ for jshift=Range_x(1):Range_x(3):Range_x(2) %-60:20
                         if(x_extend>YOKO+Margin_X)
                             Enable_Area(i,j)=0;
                         end
-                        
-                        
+
                         %%%%%%%%%%%%%%%% Enable Area Setting %%%%%%%%%%%%%%%%
                         
                     end

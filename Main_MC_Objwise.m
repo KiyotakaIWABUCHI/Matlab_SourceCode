@@ -11,16 +11,16 @@ block_size_MLE=10;
 SIZE=[256 256];
 %% parameter MD Prop.
 Down_Sample_Rate_MD=1;
-Th_MD=10;
-Th_Min_Label=10; %“®‚«„’è‚ª¬Œ÷‚·‚éŠÏ“_‚©‚ç
+Th_MD=7.8;
+Th_Min_Label=5; %“®‚«„’è‚ª¬Œ÷‚·‚éŠÏ“_‚©‚ç
 Opening_time=10;
 
 %% parameter ME Prop.
 down_sample_rate=1;
 Down_Sample_Rate_Grav=2;
-Range_x=[-0 0 2]; %[start end] ‚Ý range_x=[-40 40 4]; dolfine car_bus bird
-Range_y=[-40 40 2]; %range_y=[-20 20 4]; dolfin car_bus bird
-Range_rotate=[-20 20 2]; %‚È‚µ
+Range_x=[-52 52 2]; %[start end] ‚Ý range_x=[-40 40 4]; dolfine car_bus bird
+Range_y=[-20 20 2]; %range_y=[-20 20 4]; dolfin car_bus bird
+Range_rotate=[-0 0 2]; %‚È‚µ
 Range_scale=[0 0 10]; %‚È‚µ
 
 %% Read Images
@@ -44,11 +44,11 @@ for t_tmp=1:output_subframe_number
     %tmp=rgb2gray(imread(['../Images/Input/3dsmax_traffic/traffic_frame',pad(num2str(t_tmp-1),4,'left','0'),'.png']));
     %tmp=rgb2gray(imread(['../Images/Input/3dsmax_animal/animal_frame',pad(num2str(t_tmp-1),4,'left','0'),'.png']));
     %tmp=rgb2gray(imread(['../Images/Input/3dsmax_animal/eagle_frame',pad(num2str(t_tmp-1),4,'left','0'),'.png']));
-    tmp=rgb2gray(imread(['../Images/Input/3dsmax_limitation/limitation_frame',pad(num2str(t_tmp-1),4,'left','0'),'.png']));
+    %tmp=rgb2gray(imread(['../Images/Input/3dsmax_limitation/limitation_frame',pad(num2str(t_tmp-1),4,'left','0'),'.png']));
     %tmp=rgb2gray(imread(['../Images/Input/3dsmax_sky/sky_frame',pad(num2str(t_tmp-1),4,'left','0'),'.png']));
    
     %%
-    Imgs(:,:,t_tmp)=imresize(tmp(1:end,1:end),SIZE,'bicubic');
+   % Imgs(:,:,t_tmp)=imresize(tmp(1:end,1:end),SIZE,'bicubic');
 end
 %% Gen bitplane imgs
 DC_rate=0; % DC_rate =>Dark Count Rate
@@ -56,13 +56,13 @@ DC_rate=0; % DC_rate =>Dark Count Rate
 % tmp=Function_Reconstruction_SUM(bitplanes);
 % imshow(uint8(tmp))
 %% load bit-plane for Compare
-%load('../Images/Output/IEEE_traffic/Original_bitplanes');
+load('../Images/Output/IEEE_traffic_Z_chi/Original_bitplanes');
 %%load('../Images/Output/IEEE_animal/Original_bitplanes');
-load('../Images/Output/IEEE_sky/Original_bitplanes');
-%load('../Images/Output/IEEE_limitation/Original_bitplanes');
+%load('../Images/Output/IEEE_sky_Z_chi/Original_bitplanes');
+%load('../Images/Output/IEEE_limitation_Z_chi/Original_bitplanes');
 %%
 tmp_bitplane=bitplanes;
-for loop=1:4
+for loop=1:2
     %% Motion Detection
     [chi_2D]=Function_Module_Chi2MapCul(tmp_bitplane,Down_Sample_Rate_MD);
     chi_2D=imresize(chi_2D,SIZE,'bicubic');
@@ -74,7 +74,7 @@ for loop=1:4
     [Labeled_MDmap,Centroid_Point,Num_of_Moving_Area]=Function_Culcurate_Centroid(Denoised_MD_Map);
     
     %% Motion Compensation
-    for n=1:1
+    for n=1:4
         %% Select Active Area
         [M,Index]=max(Num_of_Moving_Area);
         Num_of_Moving_Area(Index)=0;

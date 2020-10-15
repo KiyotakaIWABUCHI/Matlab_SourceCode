@@ -24,7 +24,7 @@ for t=1:100
         
         %% Image Gen
         Back_color=50;
-        Obj_Back_Size=[100 100];
+        Obj_Back_Size=[200 100];
         %Obj_Target_Size=[80 80]; %注意 Resolution測定時，パラメータ
         Mov_back=[0 0];
         %Mov_target=[10 0];
@@ -47,8 +47,8 @@ for t=1:100
         for Obj_Target_Size_tmp=5:5:100
             cnt_excel_seet=cnt_excel_seet+1;
             Obj_color_back=150;
-            Obj_color_target=50+Obj_Target_Size_tmp*2;
-            Obj_Target_Size=[50 50];
+            Obj_color_target=150;
+            Obj_Target_Size=[94 47];
             %Measurement_Excel(cnt_obj_size+1,1)=Obj_Target_Size_tmp; % CSV
             Measurement_Excel(t+1,1,cnt_excel_seet)=Obj_color_back; % CSV
             
@@ -110,6 +110,6 @@ for t=1:100
             end
         end
     end
-    save(['../csv/IEEE/Resolution_array_Chiaxis_PhotonLevel_over10_4param'],'Measurement_Excel')
+    %save(['../csv/IEEE/Resolution_array_Chiaxis_PhotonLevel_over10_4param'],'Measurement_Excel')
 end
 %%%%%%%%%%%%% Main St%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

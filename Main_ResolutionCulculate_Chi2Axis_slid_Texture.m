@@ -24,8 +24,6 @@ for t=1:100
         
         %% Image Gen
         Back_color=50;
-        Obj_color_back=150;
-        Obj_color_target=150;
         Obj_Back_Size=[200 100];
         %Obj_Target_Size=[80 80]; %注意 Resolution測定時，パラメータ
         Mov_back=[0 0];
@@ -46,39 +44,30 @@ for t=1:100
         
         %%%%%%%%%%%%% Main St%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         cnt_excel_seet=0;
-        for Obj_Target_Size_tmp=100:10:200
+        for Obj_Target_Size_tmp=0:6
             cnt_excel_seet=cnt_excel_seet+1;
-            Obj_Target_Size=[Obj_Target_Size_tmp Obj_Target_Size_tmp/2];
+            Obj_color_back=150;
+            Obj_color_target=150;
+            Obj_Target_Size=[94 47];
             %Measurement_Excel(cnt_obj_size+1,1)=Obj_Target_Size_tmp; % CSV
             Measurement_Excel(t+1,1,cnt_excel_seet)=Obj_Target_Size_tmp; % CSV
             
            %% シーン&評価用bit-planeせいせい
-            [Imgs,RoIMap]=Function_TOP_ResolutionCulculate_ImgGen(SIZE,output_subframe_number,Obj_Back_Size,Obj_Target_Size,Mov_back,Mov_target,Back_color,Obj_color_back,Obj_color_target);
-            imwrite(uint8(Imgs(:,:,1)),['../csv/Objsize',num2str(Obj_Target_Size_tmp),'.png'])
+            [Imgs,RoIMap]=Function_TOP_ResolutionCulculate_SlidTexture_ImgGen(SIZE,output_subframe_number,Obj_Back_Size,Obj_Target_Size,Mov_back,Mov_target,Back_color,Obj_color_back,Obj_color_target,Obj_Target_Size_tmp);
+            imwrite(uint8(Imgs(:,:,1)),['../csv/Slid',num2str(Obj_Target_Size_tmp),'.png'])
             DC_rate=0; % DC_rate =>Dark Count Rate
             [bitplanes]=Function_BitplaneGen(Imgs,output_subframe_number,max_photon_number,min_photon_number,q,alpha,DC_rate);
             [chi_2D_origin]=Function_Module_Chi2MapCul(bitplanes,Down_Sample_Rate_MapUpdate);
-%             img_blur=Function_Reconstruction_SUM(bitplanes);
-%             imwrite(uint8(chi_2D_origin*10),['../csv/Chi_row',num2str(Obj_Target_Size_tmp),'.png'])
-%             imwrite(uint8(img_blur),['../csv/Img_blur.png'])
             %chi_2D_origin=chi_2D_origin.*double(chi_2D_origin>K_sigmoid_centor);
             [bitplane_ans]=Function_ME_ROIHeatMap(bitplanes,Range_x,Range_y_ans,ones(SIZE),down_sample_rate);
-            
             [chi_2D_ans]=Function_Module_Chi2MapCul(bitplane_ans,Down_Sample_Rate_MapUpdate);
-%             img_ans=Function_Reconstruction_SUM(bitplane_ans);
-%             imwrite(uint8(chi_2D_ans*10),['../csv/Chi_answer.png'])
-%             imwrite(uint8(img_ans),['../csv/Img_answer.png'])
             %chi_2D_ans=chi_2D_ans.*double(chi_2D_ans>K_sigmoid_centor);
             imshow(uint8(chi_2D_origin))
-            %target_chi=sum(sum(RoIMap.*(chi_2D_origin-chi_2D_ans)));
-            target_chi=sum(sum((chi_2D_origin)));
+            target_chi=sum(sum(RoIMap.*(chi_2D_origin-chi_2D_ans)));
             Range_y_ans=[Mov_tmp Mov_tmp 1];
-            %back_chi=sum(sum((1-RoIMap).*(chi_2D_ans-chi_2D_origin)));  
-            back_chi=sum(sum((chi_2D_ans))); 
+            back_chi=sum(sum((1-RoIMap).*(chi_2D_ans-chi_2D_origin)));       
             Measurement_Excel(t+1,2,cnt_excel_seet)=target_chi; % CSV
             Measurement_Excel(t+1,3,cnt_excel_seet)=back_chi; % CSV
-            %back_chi=sum(sum((1-RoIMap).*(chi_2D_ans-chi_2D_origin))); 
-            
             %%   
             cnt_Map_step=2; % Count Initialize
             for Map_update_Step_inv_cnt=1:size(Map_update_Step_inv_array,2)
@@ -86,6 +75,8 @@ for t=1:100
                 dsp=[t Mov_tmp Obj_Target_Size_tmp 1/Map_update_Step_inv]
                 cnt_Map_step=cnt_Map_step+1;
                 %Measurement_Excel(1,cnt_Map_step+1,cnt_excel_seet)=1/Map_update_Step_inv; % CSV
+                
+                
                 Map_update_Step=Map_update_Step_inv;
                 Heat_map=ones(SIZE); % Heatmap Initialize
                 %%%%%%%%% Iterative MC %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -95,14 +86,14 @@ for t=1:100
                     %% 高速化時・並進のみ
                     Heat_map=(1-RoIMap)*Map_update_Step_inv+RoIMap;
                     
+                    %% Rate
                     Rate=sum(sum(Heat_map.*chi_2D_origin))/sum(sum(Heat_map.*chi_2D_ans));
                     if(t==1)  
                         Measurement_Excel(1,cnt_Map_step+1,cnt_excel_seet)=Rate;
                     else
                         Measurement_Excel(1,cnt_Map_step+1,cnt_excel_seet)=(Measurement_Excel(1,cnt_Map_step+1,cnt_excel_seet)*(t-1)+Rate)/t;
                     end
-                     
-                   %imwrite(uint8(Heat_map*255),['../csv/Map_',num2str(Map_update_Step_inv),'.png']);
+                    %%  
                     [tmp_bitplane,Estimation_x,Estimation_y]=Function_ME_ROIHeatMap(bitplanes,Range_x,Range_y,Heat_map,down_sample_rate);
                     %% ROI Map Update
                     
@@ -131,6 +122,6 @@ for t=1:100
             end
         end
     end
-    save(['../csv/IEEE/20201008_Resolution_array_Chiaxis_ObjSize2_for_Slid_4param'],'Measurement_Excel')
+    save(['../csv/IEEE/20201008_Resolution_array_Chiaxis_SlidTexure_4param'],'Measurement_Excel')
 end
 %%%%%%%%%%%%% Main St%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

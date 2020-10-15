@@ -93,6 +93,8 @@ for x=range_x(1):range_x(3):range_x(2) %-60:20
         end
         A_shulink=imresize(A,1/K,'bilinear');
         result_2D_yukou=imresize(A_shulink,size(A),'bilinear');
+        %result_2D_yukou = imgaussfilt(A,'FilterSize',K);
+       %%
         result_2D(:,:)=realmax/2;
        if(y<0)
             if(x<0)

@@ -5,11 +5,11 @@ close all
 %load('../../csv/IEEE/Resolution_array_Chiaxis_PhotonLevel_over10_4param')
 %load('../../csv/IEEE/Resolution_array_Chiaxis_Texture_over10_4param')
 %load('../../csv/IEEE/Resolution_array_Chiaxis_ObjSize_for_Slid_over10_4param') %0928‚ª‚«‚ê‚¢
-%load('../../csv/IEEE/20201002_Resolution_array_Chiaxis_ObjSize2_for_Slid_4param') %0928‚ª‚«‚ê‚¢
-%load('../../csv/IEEE/20201002_Resolution_array_Chiaxis_SlidTexure_4param') %0928‚ª‚«‚ê‚¢
+%load('../../csv/IEEE/20201008_Resolution_array_Chiaxis_ObjSize2_for_Slid_4param') %0928‚ª‚«‚ê‚¢
+%load('../../csv/IEEE/20201008_Resolution_array_Chiaxis_SlidTexure_4param') %0928‚ª‚«‚ê‚¢
 %load('../../csv/IEEE/20201005_Resolution_Line_ObjSize') 
 %load('../../csv/IEEE/20201005_Resolution_Line_Color')
-
+load('../../csv/IEEE/20201010_Resolution_Line_ObjSize') 
 
 f=figure('Name','Resolution');
 %Measurement_mean=zeros(1,size(Measurement_Excel,2),size(Measurement_Excel,3))
@@ -30,8 +30,9 @@ for s=1:5
     hold on
     %A((s-1)*size(Measurement_Excel,3)+1:s*size(Measurement_Excel,3))= Measurement_mean(1,2,:)./(D(s)*Measurement_mean(1,3,:));
     %B((s-1)*size(Measurement_Excel,3)+1:s*size(Measurement_Excel,3))=Measurement_mean(1,4+(s-1),:);
-    A(1:size(Measurement_Excel,3))= Measurement_mean(1,2,:)./(D(s)*(Measurement_mean(1,3,:)));
-    B(1:size(Measurement_Excel,3))=Measurement_mean(1,4+(s-1),:);
+    %A(1:size(Measurement_Excel,3))= Measurement_mean(1,2,:)./(D(s)*(Measurement_mean(1,3,:)));
+    A(1:size(Measurement_Excel,3))= Measurement_Excel(1,4+(s-1),:);
+    B(1:size(Measurement_Excel,3))=Measurement_mean(:,4+(s-1),:);
     if(s==1)
         plot(A,B,'o','MarkerSize',5,'MarkerFaceColor','b','MarkeredgeColor','b','LineStyle','--','Color','b')
     elseif(s==2)
@@ -55,7 +56,7 @@ end
 % B(1:size(Measurement_Excel,3))=Measurement_mean(1,7,:);
 % plot(A,B,'v','MarkerSize',6,'LineWidth',1.5,'MarkerFaceColor','c','MarkeredgeColor','c')
 %plot(D(2:end,1),D(2:end,10),'c-v','MarkerSize',6,'MarkerFaceColor','c','MarkeredgeColor','c')
-axis([0 5 0 1.0]);
+axis([0.7 1.4 0 1.0]);
 %l.Box='off';
 %l.Location ='northoutside';
 h_axes = gca;
@@ -67,9 +68,10 @@ l.FontSize=16.0;
 %l.NumColumns=1;
 l.Orientation='horizontal';
 ylabel('Error Rate of Motion Estimation','FontSize',18,'Color','k')
-xlabel('Rate of Total \chi^2 (Target Area/Obstacle Area) ','FontSize',17,'Color','k')
+xlabel('Rate of Total \chi^2   (\chi2_A/\chi2_B) ','FontSize',17,'Color','k')
 grid on
 %print(gcf,'-dpng', '-r400','../../csv/Resolution_Degree_of_Interest_PhotonLevel.png')
 %print(gcf,'-dpng', '-r400','../../csv/Resolution_Degree_of_Interest_Objsize.png')
 %print(gcf,'-dpng', '-r400','../../csv/Slid_Texture.png')
-%print(gcf,'-dpng', '-r400','../../csv/Line_Color_Line.png')
+print(gcf,'-dpng', '-r400','../../csv/Line_ObjSize_Line.png')
+%print(gcf,'-dpng', '-r400','../../csv/Sqare_SlidNum.png')

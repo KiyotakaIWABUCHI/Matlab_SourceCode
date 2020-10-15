@@ -11,7 +11,16 @@ mov_per_frame=Mov/(Num_Imgs-1);
 for t=1:Num_Imgs
     delta_mov=round(mov_per_frame*(t-1));
     Imgs_Update(Start_pix(1)+delta_mov(1):Start_pix(1)+Obj_height-1+delta_mov(1),Start_pix(2)+delta_mov(2):Start_pix(2)+Obj_width-1+delta_mov(2),t)=Obj_color;
-    
+
 end
-img_resion(Start_pix(1):Start_pix(1)+Mov(1)+Obj_height,Start_pix(2):Start_pix(2)+Mov(2)+Obj_width)=1;
+
+if(Mov(1)<0)
+    height_minus=Mov(1);
+    height_plus=0;
+else
+    height_minus=0;
+    height_plus=Mov(1);
+end
+
+img_resion(Start_pix(1)+height_minus:Start_pix(1)+height_plus+Obj_height,Start_pix(2):Start_pix(2)+Mov(2)+Obj_width)=1;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

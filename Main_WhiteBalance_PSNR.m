@@ -3,19 +3,19 @@ close all
 %%
 alpha=2;
 q=1;
-%Obj='IEEE_traffic'
+Obj='IEEE_traffic_Z_chi'
 %Obj='IEEE_sky'
-Obj='IEEE_limitation';
+%Obj='IEEE_limitation';
 %% Original Bit-plane
 load(['../Images/Output/',Obj,'/Original_bitplanes']);
 %% GT
 GT=double(imread(['../Images/Output/',Obj,'/FirstFrameGroudTruth.png']));
-%WP=[156 90];%traffic
-WP=[30 116];%limitation
+WP=[156 90];%traffic
+%WP=[30 116];%limitation
 %WP=[9 75];%sky
-%BP=[27 151];%traffic
+BP=[27 151];%traffic
 %BP=[238 21];%limitation
-BP=[183 38];%limitation
+%BP=[183 38];%limitation
 %% Avg
 %[non,Avg_row]=Function_Reconstruction_SUM(bitplanes);
 Avg_row=Function_Reconstruction_MLE(bitplanes,alpha,q);

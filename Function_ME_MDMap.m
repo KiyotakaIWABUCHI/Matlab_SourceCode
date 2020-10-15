@@ -9,8 +9,8 @@ cost_min=realmax;
 bitplane_MC=bitplanes;
 Estimation_x=zeros(TATE,YOKO);
 Estimation_y=zeros(TATE,YOKO);
-Margin_X=round(YOKO/2);
-Margin_Y=round(TATE/2);
+Margin_X=round(YOKO);
+Margin_Y=round(TATE);
 MDMap=double(LabeledMDMap==Select_Area);
 O_obj=[O_obj_Array(Select_Area,1) O_obj_Array(Select_Area,2)];
 imshow(uint8(MDMap*255))
