@@ -18,9 +18,9 @@ Opening_time=10;
 %% parameter ME Prop.
 down_sample_rate=1;
 Down_Sample_Rate_Grav=2;
-Range_x=[-52 52 2]; %[start end] ‚Ý range_x=[-40 40 4]; dolfine car_bus bird
-Range_y=[-20 20 2]; %range_y=[-20 20 4]; dolfin car_bus bird
-Range_rotate=[-0 0 2]; %‚È‚µ
+Range_x=[-0 0 4]; %[start end] ‚Ý range_x=[-40 40 4]; dolfine car_bus bird
+Range_y=[-50 50 2]; %range_y=[-20 20 4]; dolfin car_bus bird
+Range_rotate=[-20 20 2]; %‚È‚µ
 Range_scale=[0 0 10]; %‚È‚µ
 
 %% Read Images
@@ -56,13 +56,14 @@ DC_rate=0; % DC_rate =>Dark Count Rate
 % tmp=Function_Reconstruction_SUM(bitplanes);
 % imshow(uint8(tmp))
 %% load bit-plane for Compare
-load('../Images/Output/IEEE_traffic_Z_chi/Original_bitplanes');
+%load('../Images/Output/IEEE_traffic_Z_chi/Original_bitplanes');
 %%load('../Images/Output/IEEE_animal/Original_bitplanes');
-%load('../Images/Output/IEEE_sky_Z_chi/Original_bitplanes');
+load('../Images/Output/IEEE_sky_Z_chi/Original_bitplanes');
 %load('../Images/Output/IEEE_limitation_Z_chi/Original_bitplanes');
+%load('../Images/Output/PCSJ_ppt_Scene/Original_bitplanes');
 %%
 tmp_bitplane=bitplanes;
-for loop=1:2
+for loop=1:1
     %% Motion Detection
     [chi_2D]=Function_Module_Chi2MapCul(tmp_bitplane,Down_Sample_Rate_MD);
     chi_2D=imresize(chi_2D,SIZE,'bicubic');
@@ -74,7 +75,7 @@ for loop=1:2
     [Labeled_MDmap,Centroid_Point,Num_of_Moving_Area]=Function_Culcurate_Centroid(Denoised_MD_Map);
     
     %% Motion Compensation
-    for n=1:4
+    for n=1:2
         %% Select Active Area
         [M,Index]=max(Num_of_Moving_Area);
         Num_of_Moving_Area(Index)=0;

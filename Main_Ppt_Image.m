@@ -3,13 +3,11 @@ close all
 %%
 alpha=2;
 q=1;
-Obj='IEEE_traffic_Z_chi'
-%Obj='IEEE_sky_Z_chi'
-%Obj='IEEE_sky'
+%Obj='IEEE_traffic_Z_chi'
+Obj='IEEE_sky_Z_chi'
 %Obj='IEEE_limitation';
 %% Original Bit-plane
 load(['../Images/Output/',Obj,'/Original_bitplanes']);
-photon_average=sum(sum(sum(bitplanes,3)))/256/256/256;
 %% GT
 GT=double(imread(['../Images/Output/',Obj,'/FirstFrameGroudTruth.png']));
 %WP=[156 90];%traffic
@@ -75,16 +73,40 @@ imshow(uint8(PixWiseK7))
 result_psnr(1,:)=[PSNR_Avg,PSNR_prop,PSNR_prop_Weight,PSNR_Objwise,PSNR_PixwiseK1,PSNR_PixwiseK3,PSNR_PixwiseK7];
 result_psnr(2,:)=[SSIM_Avg,SSIM_prop,SSIM_prop_Weight,SSIM_Objwise,SSIM_PixwiseK1,SSIM_PixwiseK3,SSIM_PixwiseK7];
 result_table=table(["Avg";"Prop";"Prop_Weight";"ObjWise";"PixWiseK1";"PixWiseK3";"PixWiseK7"],[PSNR_Avg;PSNR_prop;PSNR_prop_Weight;PSNR_Objwise;PSNR_PixwiseK1;PSNR_PixwiseK3;PSNR_PixwiseK7],[SSIM_Avg;SSIM_prop;SSIM_prop_Weight;SSIM_Objwise;SSIM_PixwiseK1;SSIM_PixwiseK3;SSIM_PixwiseK7]);
+% 
+Gain=1.1;
+figure
+%RoI=[149 194 108 249] %traffic
+RoI=[103 164 26 148] %sky
+zoom_img=imresize(GT(RoI(1):RoI(2),RoI(3):RoI(4)),2,'nearest')*Gain;
+imshow(uint8(zoom_img))
+imwrite(uint8(zoom_img),['../IEEE_result/tex/',Obj,'/zoom_img/FirstFrame_ZoomImg.png'])
+zoom_img=imresize(Avg(RoI(1):RoI(2),RoI(3):RoI(4)),2,'nearest')*Gain;
+imshow(uint8(zoom_img))
+imwrite(uint8(zoom_img),['../IEEE_result/tex/',Obj,'/zoom_img/Avg_ZoomImg.png'])
+zoom_img=imresize(Prop(RoI(1):RoI(2),RoI(3):RoI(4)),2,'nearest')*Gain;
+imwrite(uint8(zoom_img),['../IEEE_result/tex/',Obj,'/zoom_img/Prop_ZoomImg.png'])
+zoom_img=imresize(Prop_Weight(RoI(1):RoI(2),RoI(3):RoI(4)),2,'nearest')*Gain;
+imwrite(uint8(zoom_img),['../IEEE_result/tex/',Obj,'/zoom_img/Prop_Weight_ZoomImg.png'])
+zoom_img=imresize(ObjWise(RoI(1):RoI(2),RoI(3):RoI(4)),2,'nearest')*Gain;
+imwrite(uint8(zoom_img),['../IEEE_result/tex/',Obj,'/zoom_img/ObjWise_ZoomImg.png'])
+zoom_img=imresize(PixWiseK3(RoI(1):RoI(2),RoI(3):RoI(4)),2,'nearest')*Gain;
+imwrite(uint8(zoom_img),['../IEEE_result/tex/',Obj,'/zoom_img/PixWiseK3_ZoomImg.png'])
+zoom_img=imresize(PixWiseK7(RoI(1):RoI(2),RoI(3):RoI(4)),2,'nearest')*Gain;
+imwrite(uint8(zoom_img),['../IEEE_result/tex/',Obj,'/zoom_img/PixWiseK7_ZoomImg.png'])
 
 
 %% ファイル出力
 Gain=1.1;
-imwrite(uint8(GT*Gain),['../IEEE_result/tex/',Obj,'/FirstFrame.png'])
-imwrite(uint8(Avg*Gain),['../IEEE_result/tex/',Obj,'/Avg_TotalFrame.png'])
-imwrite(uint8(Prop*Gain),['../IEEE_result/tex/',Obj,'/Proposed_Chi_Min.png'])
-imwrite(uint8(Prop_Weight*Gain),['../IEEE_result/tex/',Obj,'/Proposed_Weight.png'])
-imwrite(uint8(ObjWise*Gain),['../IEEE_result/tex/',Obj,'/ObjWise.png'])
-imwrite(uint8(PixWiseK1*Gain),['../IEEE_result/tex/',Obj,'/PixWise.png'])
-imwrite(uint8(PixWiseK3*Gain),['../IEEE_result/tex/',Obj,'/BlockWise_3x3.png'])
-imwrite(uint8(PixWiseK7*Gain),['../IEEE_result/tex/',Obj,'/BlockWise_9x9.png'])
-writetable(result_table,['../IEEE_result/tex/',Obj,'/Image_Quality.txt'])
+% imwrite(uint8(GT*Gain),['../IEEE_result/tex/',Obj,'/FirstFrame.png'])
+% imwrite(uint8(Avg*Gain),['../IEEE_result/tex/',Obj,'/Avg_TotalFrame.png'])
+% imwrite(uint8(Prop*Gain),['../IEEE_result/tex/',Obj,'/Proposed_Chi_Min.png'])
+% imwrite(uint8(Prop_Weight*Gain),['../IEEE_result/tex/',Obj,'/Proposed_Weight.png'])
+% imwrite(uint8(ObjWise*Gain),['../IEEE_result/tex/',Obj,'/ObjWise.png'])
+% imwrite(uint8(PixWiseK1*Gain),['../IEEE_result/tex/',Obj,'/PixWise.png'])
+% imwrite(uint8(PixWiseK3*Gain),['../IEEE_result/tex/',Obj,'/BlockWise_3x3.png'])
+% imwrite(uint8(PixWiseK7*Gain),['../IEEE_result/tex/',Obj,'/BlockWise_9x9.png'])
+% writetable(result_table,['../IEEE_result/tex/',Obj,'/Image_Quality.txt'])
+
+%%
+

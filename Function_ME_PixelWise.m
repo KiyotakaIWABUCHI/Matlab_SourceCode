@@ -91,8 +91,9 @@ for x=range_x(1):range_x(3):range_x(2) %-60:20
                A=result_2D(1:end-y_margin,1:end-x_margin);
             end
         end
-        A_shulink=imresize(A,1/K,'bilinear');
-        result_2D_yukou=imresize(A_shulink,size(A),'bilinear');
+        %A_shulink=imresize(A,1/K,'bicubic');  
+        %result_2D_yukou=imresize(A_shulink,size(A),'bicubic');
+        result_2D_yukou = filter2(fspecial('average',K),A);
         %result_2D_yukou = imgaussfilt(A,'FilterSize',K);
        %%
         result_2D(:,:)=realmax/2;

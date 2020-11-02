@@ -7,34 +7,38 @@ SIZE=[256 256];
 Down_Sample_Rate_Reconstruction=1;
 %%
 sigma_chi=2;
+% sigma_pix=1000;
+% sigma_dist=	100;
 %% chi update ver param
-Kernel_size=5; %10 dolfine %car heri 3
-sigma=100; %100
+Kernel_size=4; %10 dolfine %car heri 3
+sigma=200; %100
 Cycle_update=1; %car he2
 %% Rank Min reconst param
 rank_num=1;
 %% Previously Heatmap param
 Th_HeatMap=0.0;
 %%
-Loop_Num=9;
+Loop_Num=10;
 %%
 bitplanes=zeros(256,256,256,Loop_Num);
 CHI_Maps=zeros(256,256,Loop_Num);
 HeatMaps=zeros(256,256,Loop_Num);
 CHI_Sum=zeros(256,256,Loop_Num);
 ME_results=zeros(2,Loop_Num);
+MotionMap=zeros(256,256,2);
 %%
 Verosity=-36;
 %% Obj Selection
-Obj='test2'
+%Obj='test'
 %Obj='toyplane'
 %Obj='car_bus_heri'
 %Obj='doubledoor'
 %Obj='bird'
 %Obj='IEEE_traffic'
-%Obj='IEEE_sky_Z_chi'
+Obj='IEEE_sky_Z_chi'
 %Obj='IEEE_limitation'
 %Obj='IEEE_traffic_Z_chi'
+%Obj='PCSJ_ppt_Scene'
 
 for i=0:Loop_Num-1
     load(['../Images/Output/',Obj,'/IterativeOutput_',num2str(i+1),'times_bitplaneStyle']);
@@ -52,9 +56,13 @@ for i=0:Loop_Num-1
     [chi_2D]=Function_Module_Chi2MapCul(bitplane_MC,Down_Sample_Rate_Reconstruction);
     chi_2D=imresize(chi_2D,SIZE,'bicubic');
     CHI_Maps(:,:,i+1)=chi_2D;
-  figure
-  imshow(uint8(CHI_Maps(:,:,i+1)*5))
+%   figure
+%   imshow(uint8(CHI_Maps(:,:,i+1)*5))
+  imwrite(uint8(CHI_Maps(:,:,i+1)*3),['../Images/Output/',Obj,'/ChiMap_Noisy',num2str(i+1),'.png'])
 end
+ imshow(uint8(CHI_Maps(:,:,1)*2))
+ figure
+imshow(uint8(CHI_Maps(:,:,10)*2))
  imwrite(uint8(CHI_Maps(:,:,1)*3),['../Images/Output/',Obj,'/ChiMap_Noisy.png'])
 %% chi no update ver
 img_result_no_update=zeros(SIZE);
@@ -78,9 +86,16 @@ for f_num=1:Loop_Num
         chi_map_pint=CHI_Maps(:,:,f_num);
         %% ChiMap update process
         chi_map_pint_update=Function_GuideFilter_ChiMap_Update(image_pint,chi_map_pint,Kernel_size,sigma);
+        %chi_map_pint_update = filter2(fspecial('average',Kernel_size),chi_map_pint);
+        %chi_map_pint_update=Function_Bilateral(chi_map_pint,Kernel_size,sigma_pix,sigma_dist);
         CHI_Maps(:,:,f_num)=chi_map_pint_update;
     end
+    imwrite(uint8(CHI_Maps(:,:,f_num)*3),['../Images/Output/',Obj,'/ChiMap_Denoise',num2str(f_num),'.png'])
 end
+figure
+imshow(uint8(CHI_Maps(:,:,1)*2))
+figure
+imshow(uint8(CHI_Maps(:,:,10)*2))
 
 %% Reconstruction
 img_result=zeros(SIZE);
@@ -88,8 +103,8 @@ w_total=zeros(SIZE);
 imgs=zeros(SIZE(1),SIZE(2),Loop_Num);
 for i=0:Loop_Num-1
     i_tmp=i+1;
-    %[tmp_norm,img]=Function_Reconstruction_SUM(bitplanes(:,:,:,i_tmp));
-    [img]=Function_Reconstruction_MLE(bitplanes(:,:,:,i_tmp),alpha,q);
+    [tmp_norm,img]=Function_Reconstruction_SUM(bitplanes(:,:,:,i_tmp));
+    %[img]=Function_Reconstruction_MLE(bitplanes(:,:,:,i_tmp),alpha,q);
     imgs(:,:,i_tmp)=double(img);
     img_resize=imresize(img,0.5,'bilinear');
     img_resize=imresize(img_resize,SIZE,'bilinear');

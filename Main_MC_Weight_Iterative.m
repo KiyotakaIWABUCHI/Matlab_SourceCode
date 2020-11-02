@@ -13,8 +13,8 @@ SIZE=[256 256];
 %% parameter ME Prop.
 down_sample_rate=1;
 Down_Sample_Rate_Grav=2;
-Range_x=[-52 52 4]; %[start end] çèÇ› range_x=[-40 40 4]; dolfine car_bus bird
-Range_y=[-20 20 4]; %range_y=[-20 20 4]; dolfin car_bus bird eagle -50 50
+Range_x=[-52 52 4]; %[start end] çèÇ› range_x=[-40 40 4]; dolfine car_bus bird /traffic[-52 52 4]
+Range_y=[-12 12 4]; %range_y=[-20 20 4]; dolfin car_bus bird eagle -50 50 /traffic[-20 20 4]
 Range_rotate=[-0 0 2]; %Ç»Çµ eagle -20 20
 Range_scale=[0 0 10]; %Ç»Çµ
 
@@ -45,11 +45,12 @@ for t_tmp=1:output_subframe_number
     %tmp=rgb2gray(imread(['../Images/Input/3dsmax_doubledoor/doubledoor_frame',pad(num2str(t_tmp-1),4,'left','0'),'.png']));
     %tmp=rgb2gray(imread(['../Images/Input/3dsmax_wolf/wolf_frame',pad(num2str(t_tmp-1),4,'left','0'),'.png']));
     %tmp=rgb2gray(imread(['../Images/Input/3dsmax_CarBusHeri/car_bus_heri_frame',pad(num2str(t_tmp-1),4,'left','0'),'.png']));
-    tmp=rgb2gray(imread(['../Images/Input/3dsmax_traffic/traffic_frame',pad(num2str(t_tmp-1),4,'left','0'),'.png']));
+    %tmp=rgb2gray(imread(['../Images/Input/3dsmax_traffic/traffic_frame',pad(num2str(t_tmp-1),4,'left','0'),'.png']));
     %tmp=rgb2gray(imread(['../Images/Input/3dsmax_animal/animal_frame',pad(num2str(t_tmp-1),4,'left','0'),'.png']));
     %tmp=rgb2gray(imread(['../Images/Input/3dsmax_animal/eagle_frame',pad(num2str(t_tmp-1),4,'left','0'),'.png']));
     %tmp=rgb2gray(imread(['../Images/Input/3dsmax_limitation/limitation_frame',pad(num2str(t_tmp-1),4,'left','0'),'.png']));
     %tmp=rgb2gray(imread(['../Images/Input/3dsmax_sky/sky_frame',pad(num2str(t_tmp-1),4,'left','0'),'.png']));
+    tmp=rgb2gray(imread(['../Images/Input/3dsmax_scene_ppt/scene_ppt_frame',pad(num2str(t_tmp-1),4,'left','0'),'.png']));
     %%
     Imgs(:,:,t_tmp)=imresize(tmp(1:end,1:end),SIZE,'bicubic');
     
@@ -61,6 +62,9 @@ Heat_map=ones(SIZE); % Heatmap Initialize
 %%%%%%%%%bitplaneê∂ê¨%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DC_rate=0; % DC_rate =>Dark Count Rate
 [bitplanes]=Function_BitplaneGen(Imgs,output_subframe_number,max_photon_number,min_photon_number,q,alpha,DC_rate);
+% for t=1:256
+%     imwrite(uint8(bitplanes(:,:,t)*255),['../Images/Output/bitplanes/PCSJ_Scene/Frame',num2str(t),'.png'])
+% end
 tmp=Function_Reconstruction_SUM(bitplanes);
 imshow(uint8(tmp))
 save(['../Images/Output/test/Original_bitplanes'],'bitplanes')
@@ -72,7 +76,7 @@ for i=0:T_LOOP-1
     imwrite(uint8(Heat_map*255),['../Images/Output/test/IterativeHeatMap_',num2str(i+1),'times.png'])
     save(['../Images/Output/test/HeatMap_',num2str(i+1),'times_bitplaneStyle'],'Heat_map')  
     %% çÇë¨âªéûÅEï¿êiÇÃÇ›
-    %[tmp_bitplane,Estimation_x,Estimation_y]=Function_ME_ROIHeatMap(bitplanes,Range_x,Range_y,Heat_map,down_sample_rate);
+    %[bitplane_MC,Estimation_x,Estimation_y]=Function_ME_ROIHeatMap(bitplanes,Range_x,Range_y,Heat_map,down_sample_rate);
     %% ï¿êiÅ{âÒì]ÅEägëÂÇ†ÇË
     O_obj=Function_ObjGrav_Cul(bitplanes,Down_Sample_Rate_Grav);
     [bitplane_MC,Estimation_x,Estimation_y]=Function_ME_ROIHeatMap_ROTATE(bitplanes,Range_x,Range_y,Range_scale,Range_rotate,O_obj,Heat_map,down_sample_rate);
