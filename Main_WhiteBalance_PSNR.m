@@ -3,8 +3,8 @@ close all
 %%
 alpha=2;
 q=1;
-Obj='IEEE_traffic_Z_chi'
-%Obj='IEEE_sky_Z_chi'
+%Obj='IEEE_traffic_Z_chi16'
+Obj='IEEE_sky_Z_chi16'
 %Obj='IEEE_sky'
 %Obj='IEEE_limitation';
 %% Original Bit-plane
@@ -14,10 +14,10 @@ photon_average=sum(sum(sum(bitplanes,3)))/256/256/256;
 GT=double(imread(['../Images/Output/',Obj,'/FirstFrameGroudTruth.png']));
 %WP=[156 90];%traffic
 %WP=[30 116];%limitation
-WP=[9 75];%sky
+WP=[9 76];%sky
 %BP=[27 151];%traffic
 %BP=[238 21];%limitation
-BP=[181 39];%limitation
+BP=[181 39];%sky
 %% Avg
 %[non,Avg_row]=Function_Reconstruction_SUM(bitplanes);
 Avg_row=Function_Reconstruction_MLE(bitplanes,alpha,q);
@@ -75,7 +75,6 @@ imshow(uint8(PixWiseK7))
 result_psnr(1,:)=[PSNR_Avg,PSNR_prop,PSNR_prop_Weight,PSNR_Objwise,PSNR_PixwiseK1,PSNR_PixwiseK3,PSNR_PixwiseK7];
 result_psnr(2,:)=[SSIM_Avg,SSIM_prop,SSIM_prop_Weight,SSIM_Objwise,SSIM_PixwiseK1,SSIM_PixwiseK3,SSIM_PixwiseK7];
 result_table=table(["Avg";"Prop";"Prop_Weight";"ObjWise";"PixWiseK1";"PixWiseK3";"PixWiseK7"],[PSNR_Avg;PSNR_prop;PSNR_prop_Weight;PSNR_Objwise;PSNR_PixwiseK1;PSNR_PixwiseK3;PSNR_PixwiseK7],[SSIM_Avg;SSIM_prop;SSIM_prop_Weight;SSIM_Objwise;SSIM_PixwiseK1;SSIM_PixwiseK3;SSIM_PixwiseK7]);
-
 
 %% ファイル出力
 Gain=1.1;

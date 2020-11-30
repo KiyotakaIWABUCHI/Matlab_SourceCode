@@ -10,8 +10,8 @@ sigma_chi=2;
 % sigma_pix=1000;
 % sigma_dist=	100;
 %% chi update ver param
-Kernel_size=4; %10 dolfine %car heri 3
-sigma=200; %100
+Kernel_size=4; %10 dolfine %car heri 3  Kernel_Size=4 
+sigma=100; %100
 Cycle_update=1; %car he2
 %% Rank Min reconst param
 rank_num=1;
@@ -35,9 +35,12 @@ Verosity=-36;
 %Obj='doubledoor'
 %Obj='bird'
 %Obj='IEEE_traffic'
-Obj='IEEE_sky_Z_chi'
+%Obj='IEEE_sky_Z_chi'
 %Obj='IEEE_limitation'
 %Obj='IEEE_traffic_Z_chi'
+%% ‚±‚Á‚¿
+%Obj='IEEE_traffic_Z_chi16'
+Obj='IEEE_sky_Z_chi16'
 %Obj='PCSJ_ppt_Scene'
 
 for i=0:Loop_Num-1
@@ -80,16 +83,17 @@ imshow(uint8(img_result_no_update./w_total))
 
 %% chi map update
 for f_num=1:Loop_Num
-    for update_cycle=1:Cycle_update
-        %[image_pint_norm,image_pint]=Function_Reconstruction_SUM(bitplanes(:,:,:,f_num));
-        [image_pint]=Function_Reconstruction_MLE(bitplanes(:,:,:,f_num),alpha,q);
-        chi_map_pint=CHI_Maps(:,:,f_num);
-        %% ChiMap update process
-        chi_map_pint_update=Function_GuideFilter_ChiMap_Update(image_pint,chi_map_pint,Kernel_size,sigma);
-        %chi_map_pint_update = filter2(fspecial('average',Kernel_size),chi_map_pint);
-        %chi_map_pint_update=Function_Bilateral(chi_map_pint,Kernel_size,sigma_pix,sigma_dist);
-        CHI_Maps(:,:,f_num)=chi_map_pint_update;
-    end
+%     for update_cycle=1:Cycle_update
+%         %[image_pint_norm,image_pint]=Function_Reconstruction_SUM(bitplanes(:,:,:,f_num));
+%         [image_pint]=Function_Reconstruction_MLE(bitplanes(:,:,:,f_num),alpha,q);
+%         chi_map_pint=CHI_Maps(:,:,f_num);
+%         %% ChiMap update process
+%         chi_map_pint_update=Function_GuideFilter_ChiMap_Update(image_pint,chi_map_pint,Kernel_size,sigma);
+%         %chi_map_pint_update = filter2(fspecial('average',Kernel_size),chi_map_pint);
+%         %chi_map_pint_update=Function_Bilateral(chi_map_pint,Kernel_size,sigma_pix,sigma_dist);
+%         CHI_Maps(:,:,f_num)=chi_map_pint_update;
+%     end
+    CHI_Maps(:,:,f_num) =imboxfilt(CHI_Maps(:,:,f_num),5);
     imwrite(uint8(CHI_Maps(:,:,f_num)*3),['../Images/Output/',Obj,'/ChiMap_Denoise',num2str(f_num),'.png'])
 end
 figure
@@ -103,8 +107,8 @@ w_total=zeros(SIZE);
 imgs=zeros(SIZE(1),SIZE(2),Loop_Num);
 for i=0:Loop_Num-1
     i_tmp=i+1;
-    [tmp_norm,img]=Function_Reconstruction_SUM(bitplanes(:,:,:,i_tmp));
-    %[img]=Function_Reconstruction_MLE(bitplanes(:,:,:,i_tmp),alpha,q);
+    %[tmp_norm,img]=Function_Reconstruction_SUM(bitplanes(:,:,:,i_tmp));
+    [img]=Function_Reconstruction_MLE(bitplanes(:,:,:,i_tmp),alpha,q);
     imgs(:,:,i_tmp)=double(img);
     img_resize=imresize(img,0.5,'bilinear');
     img_resize=imresize(img_resize,SIZE,'bilinear');
@@ -149,68 +153,18 @@ for i=1:SIZE(1)
             w_total_rank(i,j)=w_total_rank(i,j)+w_tmp_rank;
    
         end
+        MotionMap(i,j,1)=ME_results(1,rank_order(i,j,1));
+        MotionMap(i,j,2)=ME_results(2,rank_order(i,j,1));
     end
 end
+csvwrite(['../Images/Output/',Obj,'/X_MotionMap.csv'],int8(MotionMap(:,:,1)))
+csvwrite(['../Images/Output/',Obj,'/Y_MotionMap.csv'],int8(MotionMap(:,:,2)))
+
 
 figure('Name','exp_weight_rank_image_update')
 imshow(uint8(img_result_rank./w_total_rank))
 img_min_chi=img_result_rank./w_total_rank;
 
-%% Using Previously Heatmap > Th
-img_result_PrevHeatMap=zeros(SIZE);
-w_total_PrevHeatMap=zeros(SIZE);
-
-for i=0:Loop_Num-1
-    HeatMap_upperTh=double(HeatMaps(:,:,i+1)<=Th_HeatMap);
-    w_tmp_PrevHeatMap=exp(double(-(HeatMap_upperTh*realmax+CHI_Maps(:,:,i+1)))/sigma_chi);
-    img_result_PrevHeatMap=img_result_PrevHeatMap+w_tmp_PrevHeatMap.*double(imgs(:,:,i+1));
-    w_total_PrevHeatMap=w_total_PrevHeatMap+w_tmp_PrevHeatMap;
-end
-figure('Name','exp weight Previously Heatmap ')
-imshow(uint8(img_result_PrevHeatMap./w_total_PrevHeatMap))
-
-%% test ‚ ‚Æ‚ÅÁ‹Ž
-img_result_test=zeros(SIZE);
-w_total_test=zeros(SIZE);
-for i=0:4:4
-    w_tmp_test=exp(double(-(CHI_Maps(:,:,i+1)))/sigma_chi);
-    img_result_test=img_result_test+w_tmp_test.*double(imgs(:,:,i+1));
-    w_total_test=w_total_test+w_tmp_test;
-end
-figure('Name','exp weight test ')
-imshow(uint8(img_result_test./w_total_test))
-%% Ref Neighbor Pixel
-Kernel_i=3;
-Kernel_j=3;
-img_result_Neighbor=zeros(SIZE);
-Frame_Num_Neiber=zeros(SIZE);
-Frame_Num_Centor=zeros(SIZE);
-for i=1+Kernel_i:SIZE(1)-Kernel_i
-    for j=1+Kernel_j:SIZE(2)-Kernel_j
-        cost_min_Neighbor=realmax;
-        cost_min_centor=realmax;
-        for c=1:Loop_Num
-            cost_tmp=CHI_Maps(i,j,c);
-            cost_Neighbor_tmp=sum(sum(CHI_Maps(i-Kernel_i:i+Kernel_i,j-Kernel_j:j+Kernel_j,c)));
-            if(cost_min_Neighbor>cost_Neighbor_tmp)
-                cost_min_Neighbor=cost_Neighbor_tmp;
-                c_Neighbor=c;
-            end
-            if(cost_min_centor>cost_tmp)
-                cost_min_centor=cost_tmp;
-                c_centor=c;
-            end         
-        end
-        w_neighbor=exp(double(-(CHI_Maps(i,j,c_Neighbor)))/sigma_chi);
-        w_centor=exp(double(-(CHI_Maps(i,j,c_Neighbor)))/sigma_chi)*0;
-        img_result_Neighbor(i,j)=w_neighbor*double(imgs(i,j,c_Neighbor))+w_centor*double(imgs(i,j,c_centor));
-        img_result_Neighbor(i,j)=img_result_Neighbor(i,j)/(w_neighbor+w_centor);
-        Frame_Num_Neiber(i,j)=c_Neighbor;
-        Frame_Num_Centor(i,j)=c_centor;
-    end
-end
-figure('Name','exp weight Neighber ')
-imshow(uint8(img_result_Neighbor))
 %%
 imwrite(uint8(img_WeightedIntegtion_all),['../Images/Output/',Obj,'/ReconstractedImage_WeightedIntegration.png'])
 imwrite(uint8(img_min_chi),['../Images/Output/',Obj,'/ReconstractedImage_MinumumChiMap.png'])

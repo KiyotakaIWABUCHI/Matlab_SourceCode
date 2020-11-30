@@ -11,10 +11,10 @@ block_size_MLE=10;
 SIZE=[256 256];
 
 %% parameter ME Prop.
-down_sample_rate=1;
+down_sample_rate=0;
 Down_Sample_Rate_Grav=2;
 Range_x=[-0 0 4]; %[start end] 刻み range_x=[-40 40 4]; dolfine car_bus bird
-Range_y=[-20 20 2]; %range_y=[-20 20 4]; dolfin car_bus bird eagle -50 50
+Range_y=[-50 50 4]; %range_y=[-20 20 4]; dolfin car_bus bird eagle -50 50
 Range_rotate=[-20 20 2]; %なし eagle -20 20
 Range_scale=[0 0 10]; %なし
 
@@ -23,7 +23,8 @@ T_LOOP=10;  %注意 Resolution測定時，1
 
 %% Map Update
 Down_Sample_Rate_MapUpdate=1;
-K_sigmoid_centor=7.82;
+%K_sigmoid_centor=7.82;
+K_sigmoid_centor=30.58;
 STEP_sigmoid=0.2; %注意 Resolution測定時，Map指定のためコメントアウト
 K_DIV=0.5; %注意0.5はほぼ閾値判定
 %% Read Images

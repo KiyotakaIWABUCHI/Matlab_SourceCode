@@ -76,7 +76,8 @@ for x=range_x(1):range_x(3):range_x(2) %-60:20
         end
         %imshow(uint8(function_reconstruced_SUM(tmp_bitplane)))
        %% ÉRÉXÉgåvéZ
-        [result_2D]=Function_Module_Chi2MapCul(tmp_bitplane,0);         
+        [result_2D]=Function_Module_Chi2MapCul(tmp_bitplane,0);  
+        %result_2D=imresize(result_2D,[TATE YOKO],'bicubic');
        %% èkägÇ≈ãﬂñTâÊëfçló∂
        if(y<0)
             if(x<0)
@@ -90,11 +91,12 @@ for x=range_x(1):range_x(3):range_x(2) %-60:20
             else
                A=result_2D(1:end-y_margin,1:end-x_margin);
             end
-        end
+       end
+        %result_2D_yukou=A;
         %A_shulink=imresize(A,1/K,'bicubic');  
         %result_2D_yukou=imresize(A_shulink,size(A),'bicubic');
-        result_2D_yukou = filter2(fspecial('average',K),A);
-        %result_2D_yukou = imgaussfilt(A,'FilterSize',K);
+        result_2D_yukou =imboxfilt(A,K);
+        %result_2D_yukou = imgaussfilt(A,(K-1/4),'FilterSize',K);
        %%
         result_2D(:,:)=realmax/2;
        if(y<0)

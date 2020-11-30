@@ -3,19 +3,19 @@ close all
 %%
 alpha=2;
 q=1;
-%Obj='IEEE_traffic_Z_chi'
-Obj='IEEE_sky_Z_chi'
+Obj='IEEE_traffic_Z_chi16'
+%Obj='IEEE_sky_Z_chi16'
 %Obj='IEEE_limitation';
 %% Original Bit-plane
 load(['../Images/Output/',Obj,'/Original_bitplanes']);
 %% GT
 GT=double(imread(['../Images/Output/',Obj,'/FirstFrameGroudTruth.png']));
-%WP=[156 90];%traffic
+WP=[156 90];%traffic
 %WP=[30 116];%limitation
-WP=[9 75];%sky
-%BP=[27 151];%traffic
+%WP=[9 75];%sky
+BP=[27 151];%traffic
 %BP=[238 21];%limitation
-BP=[181 39];%limitation
+%BP=[181 39];%sky
 %% Avg
 %[non,Avg_row]=Function_Reconstruction_SUM(bitplanes);
 Avg_row=Function_Reconstruction_MLE(bitplanes,alpha,q);
@@ -76,8 +76,8 @@ result_table=table(["Avg";"Prop";"Prop_Weight";"ObjWise";"PixWiseK1";"PixWiseK3"
 % 
 Gain=1.1;
 figure
-%RoI=[149 194 108 249] %traffic
-RoI=[103 164 26 148] %sky
+RoI=[149 194 108 249] %traffic
+%RoI=[103 164 26 148] %sky
 zoom_img=imresize(GT(RoI(1):RoI(2),RoI(3):RoI(4)),2,'nearest')*Gain;
 imshow(uint8(zoom_img))
 imwrite(uint8(zoom_img),['../IEEE_result/tex/',Obj,'/zoom_img/FirstFrame_ZoomImg.png'])
@@ -98,15 +98,14 @@ imwrite(uint8(zoom_img),['../IEEE_result/tex/',Obj,'/zoom_img/PixWiseK7_ZoomImg.
 
 %% ファイル出力
 Gain=1.1;
-% imwrite(uint8(GT*Gain),['../IEEE_result/tex/',Obj,'/FirstFrame.png'])
-% imwrite(uint8(Avg*Gain),['../IEEE_result/tex/',Obj,'/Avg_TotalFrame.png'])
-% imwrite(uint8(Prop*Gain),['../IEEE_result/tex/',Obj,'/Proposed_Chi_Min.png'])
-% imwrite(uint8(Prop_Weight*Gain),['../IEEE_result/tex/',Obj,'/Proposed_Weight.png'])
-% imwrite(uint8(ObjWise*Gain),['../IEEE_result/tex/',Obj,'/ObjWise.png'])
-% imwrite(uint8(PixWiseK1*Gain),['../IEEE_result/tex/',Obj,'/PixWise.png'])
-% imwrite(uint8(PixWiseK3*Gain),['../IEEE_result/tex/',Obj,'/BlockWise_3x3.png'])
-% imwrite(uint8(PixWiseK7*Gain),['../IEEE_result/tex/',Obj,'/BlockWise_9x9.png'])
-% writetable(result_table,['../IEEE_result/tex/',Obj,'/Image_Quality.txt'])
-
+imwrite(uint8(GT*Gain),['../IEEE_result/tex/',Obj,'/FirstFrame.png'])
+imwrite(uint8(Avg*Gain),['../IEEE_result/tex/',Obj,'/Avg_TotalFrame.png'])
+imwrite(uint8(Prop*Gain),['../IEEE_result/tex/',Obj,'/Proposed_Chi_Min.png'])
+imwrite(uint8(Prop_Weight*Gain),['../IEEE_result/tex/',Obj,'/Proposed_Weight.png'])
+imwrite(uint8(ObjWise*Gain),['../IEEE_result/tex/',Obj,'/ObjWise.png'])
+imwrite(uint8(PixWiseK1*Gain),['../IEEE_result/tex/',Obj,'/PixWise.png'])
+imwrite(uint8(PixWiseK3*Gain),['../IEEE_result/tex/',Obj,'/BlockWise_3x3.png'])
+imwrite(uint8(PixWiseK7*Gain),['../IEEE_result/tex/',Obj,'/BlockWise_9x9.png'])
+writetable(result_table,['../IEEE_result/tex/',Obj,'/Image_Quality.txt'])
 %%
 

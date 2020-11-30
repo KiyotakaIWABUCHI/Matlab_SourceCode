@@ -46,11 +46,14 @@ level7_2D=level6_2D(:,:,1:2:end)+level6_2D(:,:,2:2:end);
 %kai2_level6_2D=(level6_2D-p_hat*32*N).*(level6_2D-p_hat*32*N)./(p_hat*32*N+1)+(hanten_level6_2D-p_hat_not*32*N).*(hanten_level6_2D-p_hat_not*32*N)./(p_hat_not*32*N+1);
 %% Fixed
 Z_ki=(level7_2D-p_hat*64*N);
+Z_ki_16=(level5_2D-p_hat*16*N);
 %Z_ki=(level7_2D-p_hat*64*N);
-kai2_level7_2D=(Z_ki.*Z_ki);
+%kai2_level7_2D=(Z_ki.*Z_ki);
+kai2_level5_2D=(Z_ki_16.*Z_ki_16);
 %+(hanten_level6_2D-p_hat_not*32*N).*(hanten_level6_2D-p_hat_not*32*N)./(p_hat_not*32*N+1);
 %kai2_level7_2D=(level7_2D-p_hat*64*N).*(level7_2D-p_hat*64*N)./(p_hat*64*N+1)+(hanten_level7_2D-p_hat_not*64*N).*(hanten_level7_2D-p_hat_not*64*N)./(p_hat_not*64*N+1);
 %kai2_level8_2D=(level8_2D-p_hat*128*N).*(level8_2D-p_hat*128*N)./(p_hat*128*N+1)+(hanten_level8_2D-p_hat_not*128*N).*(hanten_level8_2D-p_hat_not*128*N)./(p_hat_not*128*N+1);
 
 %result_2D=sum(kai2_level8_2D,3)+sum(kai2_level7_2D,3)+sum(kai2_level6_2D,3);
-result_2D=sum(kai2_level7_2D,3)./(64*N*p_hat.*p_hat_not+0.000000001);
+%result_2D=sum(kai2_level7_2D,3)./(64*N*p_hat.*p_hat_not+0.000000001);
+result_2D=sum(kai2_level5_2D,3)./(16*N*p_hat.*p_hat_not+0.000000001);
