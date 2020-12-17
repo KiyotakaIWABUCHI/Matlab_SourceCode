@@ -2,7 +2,8 @@ function[bitplane]=Function_BitplaneGen(img_input,output_subframe_number,max_pho
 
 %%%%% Normalize Input Images %%%%%%%%
 img_DR = (max_photon_number)*(double(img_input))/double(max(max(max(img_input))));
-img_normalized=double(img_DR)/double(max(max(max(img_DR))))*output_subframe_number;
+%img_normalized=double(img_DR)/double(max(max(max(img_DR))))*output_subframe_number;
+img_normalized=double(img_DR)*output_subframe_number;
 bitplane=zeros(size(img_input,1),size(img_input,2),output_subframe_number);
 
 %%%%% Creat Bitplane by Photon Counting Sim using Poisson Rondom Function %%%%%%%%

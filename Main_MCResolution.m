@@ -20,11 +20,11 @@ Obj_color=177;
 
 N_num=2;%6
 V_num=10;
-T=10;
+T=1;
 %%
 csv_sheet=zeros(N_num,1);
 v_cnt=0;
-for v=24:24
+for v=30:30
     v
     Mov_Obj=[0 v]; %
     v_cnt=v_cnt+1;
@@ -39,7 +39,7 @@ for v=24:24
         [Imgs,ROI]=Function_MCResolution_ImgGen(SIZE,output_subframe_number,Obj_Size,Mov_Obj,Back_color,Obj_color,StartPix,1);
         [bitplanes]=Function_BitplaneGen(Imgs,output_subframe_number,max_photon_number,min_photon_number,q,alpha,DC_rate);
         
-        N_List=[1 2 3 4 6 12 24];
+        N_List=[1 10 30];
         %N_List=[1 2 3 4 6 12 24];
         n_cnt=0;
         
@@ -65,6 +65,7 @@ for v=24:24
                 cnt=cnt+1;
                 if(t==1)
                     imwrite(uint8(Img_Partial_deblur),['../Images/Output/Resolution_MCblur/Image_blur_Mov',num2str(n),'.png'])
+                    imwrite(uint8(imresize(chi_2D,SIZE,'bicubic')*2),['../Images/Output/Resolution_MCblur/ChiMap_Mov',num2str(n),'.png'])
                 end
             end
             
@@ -97,6 +98,6 @@ for v=24:24
     end  
 end
 
-save(['../csv/IEEE/20201125_MCResolution'],'csv_sheet')
+%save(['../csv/IEEE/20201125_MCResolution'],'csv_sheet')
 
 

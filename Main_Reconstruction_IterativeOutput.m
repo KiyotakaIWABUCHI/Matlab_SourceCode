@@ -19,6 +19,7 @@ rank_num=1;
 Th_HeatMap=0.0;
 %%
 Loop_Num=10;
+K_sigmoid_centor=20.00;
 %%
 bitplanes=zeros(256,256,256,Loop_Num);
 CHI_Maps=zeros(256,256,Loop_Num);
@@ -39,9 +40,11 @@ Verosity=-36;
 %Obj='IEEE_limitation'
 %Obj='IEEE_traffic_Z_chi'
 %% ‚±‚Á‚¿
-%Obj='IEEE_traffic_Z_chi16'
-Obj='IEEE_sky_Z_chi16'
+%Obj='IEEE_Access_traffic_Z_chi16'
+Obj='IEEE_Access_sky_Z_chi16'
+%Obj='IEEE_Access_limitation_Z_chi16'
 %Obj='PCSJ_ppt_Scene'
+%Obj='test2'
 
 for i=0:Loop_Num-1
     load(['../Images/Output/',Obj,'/IterativeOutput_',num2str(i+1),'times_bitplaneStyle']);
@@ -93,8 +96,8 @@ for f_num=1:Loop_Num
 %         %chi_map_pint_update=Function_Bilateral(chi_map_pint,Kernel_size,sigma_pix,sigma_dist);
 %         CHI_Maps(:,:,f_num)=chi_map_pint_update;
 %     end
-    CHI_Maps(:,:,f_num) =imboxfilt(CHI_Maps(:,:,f_num),5);
-    imwrite(uint8(CHI_Maps(:,:,f_num)*3),['../Images/Output/',Obj,'/ChiMap_Denoise',num2str(f_num),'.png'])
+    CHI_Maps(:,:,f_num) =imboxfilt(CHI_Maps(:,:,f_num),7);
+%     imwrite(uint8(CHI_Maps(:,:,f_num)*3),['../Images/Output/',Obj,'/ChiMap_Denoise',num2str(f_num),'.png'])
 end
 figure
 imshow(uint8(CHI_Maps(:,:,1)*2))
@@ -157,16 +160,38 @@ for i=1:SIZE(1)
         MotionMap(i,j,2)=ME_results(2,rank_order(i,j,1));
     end
 end
-csvwrite(['../Images/Output/',Obj,'/X_MotionMap.csv'],int8(MotionMap(:,:,1)))
-csvwrite(['../Images/Output/',Obj,'/Y_MotionMap.csv'],int8(MotionMap(:,:,2)))
+% csvwrite(['../Images/Output/',Obj,'/X_MotionMap.csv'],int8(MotionMap(:,:,1)))
+% csvwrite(['../Images/Output/',Obj,'/Y_MotionMap.csv'],int8(MotionMap(:,:,2)))
 
 
 figure('Name','exp_weight_rank_image_update')
 imshow(uint8(img_result_rank./w_total_rank))
 img_min_chi=img_result_rank./w_total_rank;
+for t=1:10
+    imwrite(uint8(imgs(:,:,t)*1.2),['../Images/Output/',Obj,'/Partial_deblured_img_',num2str(t),'.png'])
+    imwrite(uint8(imgs(:,:,t)*1.2),['../Images/Output/',Obj,'/Partial_deblured_img_',num2str(t),'.png'])
+end
+
+Img_future_work=img_min_chi;
+cnt_addpixel=ones(SIZE);
+
+for i=1:SIZE(1)
+    for j=1:SIZE(2)
+        for t=1:Loop_Num
+            if(CHI_Maps(i,j,t)<K_sigmoid_centor)
+                Img_future_work(i,j)=Img_future_work(i,j)+imgs(i,j,t);
+                cnt_addpixel(i,j)=cnt_addpixel(i,j)+1;
+            end
+        end
+    end
+end
+
+Img_future_work=Img_future_work./cnt_addpixel;
+figure('Name','Future_works')
+imshow(uint8(Img_future_work))
 
 %%
-imwrite(uint8(img_WeightedIntegtion_all),['../Images/Output/',Obj,'/ReconstractedImage_WeightedIntegration.png'])
+imwrite(uint8(Img_future_work),['../Images/Output/',Obj,'/ReconstractedImage_Futurework.png'])
 imwrite(uint8(img_min_chi),['../Images/Output/',Obj,'/ReconstractedImage_MinumumChiMap.png'])
 %imwrite(uint8(img_result_test./w_total_test),['../Images/Output/',Obj,'/Ideal_2frame.png'])
 imwrite(uint8(CHI_Maps(:,:,1)*3),['../Images/Output/',Obj,'/ChiMap_Denoise.png'])

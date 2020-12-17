@@ -10,17 +10,17 @@ alpha=2; %0.4               %paramater for contralling incident photon
 block_size_MLE=10;
 SIZE=[256 256];
 %% parameter MD Prop.
-Down_Sample_Rate_MD=1;
+Down_Sample_Rate_MD=2;
 Th_MD=30.58;
 Th_Min_Label=3; %“®‚«„’è‚ª¬Œ÷‚·‚éŠÏ“_‚©‚ç
 Opening_time=20;
-
+n=128;
 %% parameter MD Prop.
 down_sample_rate=0;
 Down_Sample_Rate_Grav=2;
-Range_x=[-52 52 2]; %[start end] ‚Ý range_x=[-40 40 4]; dolfine car_bus bird
-Range_y=[-20 20 2]; %range_y=[-20 20 4]; dolfin car_bus bird
-Range_rotate=[-0 0 2]; %‚È‚µ
+Range_x=[-0 0 2]; %[start end] ‚Ý range_x=[-40 40 4]; dolfine car_bus bird
+Range_y=[-50 50 2]; %range_y=[-20 20 4]; dolfin car_bus bird
+Range_rotate=[-40 40 2]; %‚È‚µ
 Range_scale=[0 0 10]; %‚È‚µ
 
 %% Read Images
@@ -56,10 +56,12 @@ DC_rate=0; % DC_rate =>Dark Count Rate
 % tmp=Function_Reconstruction_SUM(bitplanes);
 % imshow(uint8(tmp))
 %% load bit-plane for Compare
-load('../Images/Output/IEEE_traffic_Z_chi16/Original_bitplanes');
-%load('../Images/Output/IEEE_animal/Original_bitplanes');
-%load('../Images/Output/IEEE_sky_Z_chi16/Original_bitplanes');
-%load('../Images/Output/IEEE_limitation_Z_chi/Original_bitplanes');
+%load('../Images/Output/IEEE_Access_traffic_Z_chi16/Original_bitplanes');
+%load('../Images/Output/IEEE_Access_sky_Z_chi16/Original_bitplanes');
+%load('../Images/Output/IEEE_Access_limitation_Z_chi16/Original_bitplanes');
+load('../Images/Output/test2/Original_bitplanes');
+%load('../Images/Output/IEEE_sky_Z_chi16_central/Original_bitplanes');
+%load('../Images/Output/IEEE_limitation_Z_chi16_central/Original_bitplanes');
 %load('../Images/Output/PCSJ_ppt_Scene/Original_bitplanes');
 %%
 tmp_bitplane=bitplanes;
@@ -77,14 +79,14 @@ for loop=1:1
     [Labeled_MDmap,Centroid_Point,Num_of_Moving_Area]=Function_Culcurate_Centroid(Denoised_MD_Map);
     
    %% Motion Compensation
-    for n=1:8
+    for num=1:1
         %% Select Active Area
         [M,Index]=max(Num_of_Moving_Area);
         Num_of_Moving_Area(Index)=0;
         SelectArea_Number=Index;
         
        %% Motion Estimation Prop. 
-        [bitplane_MC,Estimation_x_new,Estimation_y_new]=Function_ME_MDMap(tmp_bitplane,Range_x,Range_y,Range_scale,Range_rotate,Centroid_Point,Labeled_MDmap,SelectArea_Number,down_sample_rate);
+        [bitplane_MC,Estimation_x_new,Estimation_y_new]=Function_ME_MDMap_CentorTime(tmp_bitplane,Range_x,Range_y,Range_scale,Range_rotate,Centroid_Point,Labeled_MDmap,SelectArea_Number,down_sample_rate,n);
         Area=double(Labeled_MDmap==SelectArea_Number);
         Estimation_x=Area.*Estimation_x_new+(1-Area).*Estimation_x;
         Estimation_y=Area.*Estimation_y_new+(1-Area).*Estimation_y;     
