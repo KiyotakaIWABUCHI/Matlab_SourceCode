@@ -1,10 +1,10 @@
 clear
 close all
 %%
-alpha=1.5;%1.5 or 2
+alpha=2;%1.5 or 2
 q=1;
-Obj='IEEE_Access_traffic_Z_chi16'
-%Obj='IEEE_Access_sky_Z_chi16'
+%Obj='IEEE_Access_traffic_Z_chi16'
+Obj='IEEE_Access_sky_Z_chi16'
 %Obj='IEEE_Access_limitation_Z_chi16'
 %Obj='IEEE_sky_Z_chi16'
 %Obj='IEEE_limitation_Z_chi16';
@@ -13,12 +13,14 @@ load(['../Images/Output/',Obj,'/Original_bitplanes']);
 photon_average=sum(sum(sum(bitplanes,3)))/256/256/256;
 %% GT
 GT=double(imread(['../Images/Output/',Obj,'/nth_FrameGroudTruth.png']));
-WP=[156 77];%traffic
+GT_first=double(imread(['../Images/Output/',Obj,'/FirstFrameGroudTruth.png']));
+GT_last=double(imread(['../Images/Output/',Obj,'/LastFrameGroudTruth.png']));
+%WP=[156 77];%traffic
 %WP=[30 116];%limitation
-%WP=[171 133];%sky
-BP=[26 153];%traffic
+WP=[171 133];%sky
+%BP=[26 153];%traffic
 %BP=[238 21];%limitation
-%BP=[4 190];%sky
+BP=[4 190];%sky
 %% Avg
 %[non,Avg_row]=Function_Reconstruction_SUM(bitplanes);
 Avg_row=Function_Reconstruction_MLE(bitplanes,alpha,q);
@@ -80,7 +82,9 @@ result_table=table(["Avg";"Prop";"Prop_Future";"ObjWise";"PixWiseK1";"PixWiseK3"
 % %% ファイル出力
 Gain=1.1;
 imwrite(uint8(bitplanes(:,:,128)*255),['../IEEE_result/tex/',Obj,'/128_bitplane.png'])
-imwrite(uint8(GT*Gain),['../IEEE_result/tex/',Obj,'/FirstFrame.png'])
+imwrite(uint8(GT*Gain),['../IEEE_result/tex/',Obj,'/128_Frame.png'])
+imwrite(uint8(GT_first*Gain),['../IEEE_result/tex/',Obj,'/FirstFrame.png'])
+imwrite(uint8(GT_last*Gain),['../IEEE_result/tex/',Obj,'/LastFrame.png'])
 imwrite(uint8(Avg*Gain),['../IEEE_result/tex/',Obj,'/Avg_TotalFrame.png'])
 imwrite(uint8(Prop*Gain),['../IEEE_result/tex/',Obj,'/Proposed_Chi_Min.png'])
 imwrite(uint8(Prop_Weight*Gain),['../IEEE_result/tex/',Obj,'/Proposed_Weight.png'])

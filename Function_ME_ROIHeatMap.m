@@ -1,4 +1,4 @@
-function [bitplane_MC,Estimation_x,Estimation_y]=Function_ME_ROIHeatMap(bitplanes,Range_x,Range_y,Heat_map,down_sample_rate)
+function [bitplane_MC,Estimation_x,Estimation_y]=Function_ME_ROIHeatMap(bitplanes,Range_x,Range_y,Heat_map,down_sample_rate,n,M)
 %%%%%%%%%%%%%%%%%%%%% initialize St%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 TATE=size(bitplanes,1);
 YOKO=size(bitplanes,2);
@@ -17,7 +17,7 @@ register_dy(1:number_frame)=0;
 
 for x=Range_x(1):Range_x(3):Range_x(2)
     Enable_Area=zeros(TATE,YOKO);
-    %now=x
+    now=x
     for y=Range_y(1):Range_y(3):Range_y(2)
         %now=y
         shift_per_bitplane_x=double(x)/(T-1);
@@ -45,18 +45,18 @@ for x=Range_x(1):Range_x(3):Range_x(2)
         %%
         
         for t=1:T
-            dx=round((t-1)*shift_per_bitplane_x);
-            dy=round((t-1)*shift_per_bitplane_y);
+            dx=round((t-n)*shift_per_bitplane_x);
+            dy=round((t-n)*shift_per_bitplane_y);
             
             if(register_dx(t)~=dx || register_dy(t)~=dy )
-                if(x<0)
-                    if(y<0)
+                if(dx<0)
+                    if(dy<0)
                         tmp_bitplane(1-dy:end,1-dx:end,t)=bitplanes(1:end+dy,1:end+dx,t);
                     else
                         tmp_bitplane(1:end-dy,1-dx:end,t)=bitplanes(1+dy:end,1:end+dx,t);
                     end
                 else
-                    if(y<0)
+                    if(dy<0)
                         tmp_bitplane(1-dy:end,1:end-dx,t)=bitplanes(1:end+dy,1+dx:end,t);
                     else
                         tmp_bitplane(1:end-dy,1:end-dx,t)=bitplanes(1+dy:end,1+dx:end,t);
@@ -68,10 +68,10 @@ for x=Range_x(1):Range_x(3):Range_x(2)
             end
             
         end
-        %imshow(uint8(Function_Reconstruction_SUM(tmp_bitplane)))
+        %imshow(uint8(Function_Reconstruction_MLE_Oversample(tmp_bitplane,2,1,5)))
         
         %% コスト計算
-        [result_2D]=Function_Module_Chi2MapCul(tmp_bitplane,down_sample_rate);
+        [result_2D]=Function_Module_Chi2MapCul_Mpixel(tmp_bitplane,down_sample_rate,M);
         result_2D=imresize(result_2D,[TATE YOKO],'bicubic');
         %% 重みつけ
         result_2D_yuukou=double(result_2D.*Enable_Area);
@@ -87,7 +87,7 @@ for x=Range_x(1):Range_x(3):Range_x(2)
             Estimation_y=y;
         end
         
-        imshow(uint8(Function_Reconstruction_SUM(bitplane_MC)))
+        %imshow(uint8(Function_Reconstruction_SUM(bitplane_MC)))
     end
 end
 

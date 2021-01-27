@@ -3,23 +3,23 @@ close all
 
 
 %% Garamater Public
-output_subframe_number=255; %number of bitplane image
+output_subframe_number=256; %number of bitplane image
 max_photon_number=1;      %Max number of total incident photon
 min_photon_number=0;        %Min number of total incident photon
 q=1;                     %threashold
 alpha=1; %0.4                    %paramater for contralling incident photon
 SIZE=[256 256]*2;
 SIZE_3d=[SIZE(1) SIZE(2) output_subframe_number];
-M=15;
+M=16;
 Obj_Size=[400 1]; %たてｘよこ
 StartPix=[64 70 40]; %たて　よこ　インターバル
 
 
-Back_color=177/4;
-Obj_color=177;
+Back_color=255/8;
+Obj_color=255;
 
 V_num=40;
-T=2;
+T=10;
 
 
 %%
@@ -27,7 +27,7 @@ v_cnt=0;
 Interval_v=1;
 
 Mov_Obj=[0 0];
-Movs=[0 1.0 2 4 6 8 12 16 24 40 50];
+Movs=[0 2 4 8 12 16 24 40 50];
 DC_rate=0;
 [Imgs,ROI]=Function_Dist_ImgGen(SIZE,output_subframe_number,Obj_Size,Mov_Obj,Back_color,Obj_color,StartPix,1);
 [row,col]=find(ROI);
@@ -46,7 +46,7 @@ for t=1:T
         Dist_Sheet(1,cnt)=Movs(n);
         Motion_y=0;
         Motion_x=Movs(n);
-        Sift_bitplane=Function_ShiftBitplane_Selective_Refframe(bitplanes,Motion_x,Motion_y,1);
+        Sift_bitplane=Function_ShiftBitplane_Selective_Refframe(bitplanes,Motion_x,Motion_y,128);
         Img_Partial_deblur=Function_Reconstruction_MLE(Sift_bitplane,alpha,q);
         %figure
         %imshow(uint8(Img_Partial_deblur))
@@ -70,5 +70,5 @@ end
 A=Dist_Sheet(1,:);
 B=Dist_Sheet(2,:);
 plot(A,B,'o','MarkerSize',6,'LineWidth',2,'MarkerFaceColor','b','MarkeredgeColor','b','LineStyle','-','Color','b')
-save(['../csv/IEEE/20201215_MCError'],'Dist_Sheet')
+save(['../csv/IEEE/20201219_MCError'],'Dist_Sheet')
 

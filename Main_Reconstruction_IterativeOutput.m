@@ -3,8 +3,13 @@ close all
 %% paramater(all)
 q=1;                     %threashold
 alpha=2; %0.4                    %paramater for contralling incident photon
-SIZE=[256 256];
+output_frame_num=16;
+%SIZE=[256 256];
+SIZE=[1080 1920];
 Down_Sample_Rate_Reconstruction=1;
+if(SIZE(1)==1080)
+    Down_Sample_Rate_Reconstruction=3;
+end
 %%
 sigma_chi=2;
 % sigma_pix=1000;
@@ -19,14 +24,16 @@ rank_num=1;
 Th_HeatMap=0.0;
 %%
 Loop_Num=10;
-K_sigmoid_centor=20.00;
+K_sigmoid_centor=11.00;
+%M=32;
+M=4;
 %%
-bitplanes=zeros(256,256,256,Loop_Num);
-CHI_Maps=zeros(256,256,Loop_Num);
-HeatMaps=zeros(256,256,Loop_Num);
-CHI_Sum=zeros(256,256,Loop_Num);
+bitplanes=zeros([SIZE output_frame_num Loop_Num]);
+CHI_Maps=zeros([SIZE Loop_Num]);
+HeatMaps=zeros([SIZE Loop_Num]);
+CHI_Sum=zeros([SIZE Loop_Num]);
 ME_results=zeros(2,Loop_Num);
-MotionMap=zeros(256,256,2);
+MotionMap=zeros([SIZE 2]);
 %%
 Verosity=-36;
 %% Obj Selection
@@ -41,17 +48,19 @@ Verosity=-36;
 %Obj='IEEE_traffic_Z_chi'
 %% ‚±‚Á‚¿
 %Obj='IEEE_Access_traffic_Z_chi16'
-Obj='IEEE_Access_sky_Z_chi16'
+%Obj='IEEE_Access_sky_Z_chi16'
 %Obj='IEEE_Access_limitation_Z_chi16'
 %Obj='PCSJ_ppt_Scene'
 %Obj='test2'
+Obj='test_proposed'
 
 for i=0:Loop_Num-1
     load(['../Images/Output/',Obj,'/IterativeOutput_',num2str(i+1),'times_bitplaneStyle']);
-    load(['../Images/Output/',Obj,'/HeatMap_',num2str(i+1),'times_bitplaneStyle']);
+    %load(['../Images/Output/',Obj,'/HeatMap_',num2str(i+1),'times_bitplaneStyle']);
     load(['../Images/Output/',Obj,'/Iterative_ME_Result_',num2str(i+1),'times']);
+    bitplane_MC=bitplane_shifted;
     bitplanes(:,:,:,i+1)=bitplane_MC;
-    HeatMaps(:,:,i+1)=Heat_map;
+    %HeatMaps(:,:,i+1)=Heat_map;
     ME_results(1,i+1)=mean(mean(ME_Result(:,:,1)));
     ME_results(2,i+1)=mean(mean(ME_Result(:,:,2)));
     %[img_norm,img]=Function_Reconstruction_SUM(bitplane_MC);
@@ -59,7 +68,8 @@ for i=0:Loop_Num-1
 %     figure
 %     imshow(uint8(img))
     
-    [chi_2D]=Function_Module_Chi2MapCul(bitplane_MC,Down_Sample_Rate_Reconstruction);
+    %[chi_2D]=Function_Module_Chi2MapCul(bitplane_MC,Down_Sample_Rate_Reconstruction);
+    [chi_2D]=Function_Module_Chi2MapCul_Mpixel(bitplane_MC,Down_Sample_Rate_Reconstruction,M);
     chi_2D=imresize(chi_2D,SIZE,'bicubic');
     CHI_Maps(:,:,i+1)=chi_2D;
 %   figure
@@ -111,7 +121,7 @@ imgs=zeros(SIZE(1),SIZE(2),Loop_Num);
 for i=0:Loop_Num-1
     i_tmp=i+1;
     %[tmp_norm,img]=Function_Reconstruction_SUM(bitplanes(:,:,:,i_tmp));
-    [img]=Function_Reconstruction_MLE(bitplanes(:,:,:,i_tmp),alpha,q);
+    [img]=Function_Reconstruction_MLE_Oversample(bitplanes(:,:,:,i_tmp),alpha,q,5);
     imgs(:,:,i_tmp)=double(img);
     img_resize=imresize(img,0.5,'bilinear');
     img_resize=imresize(img_resize,SIZE,'bilinear');

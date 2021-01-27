@@ -1,7 +1,7 @@
 clear
 close all
 %load(['../../csv/IEEE/20201128_MCError'])
-load(['../../csv/IEEE/20201215_MCError'])
+load(['../../csv/IEEE/20201219_MCError'])
 
 A=Dist_Sheet(1,1:end);
 B=Dist_Sheet(2,1:end);
@@ -20,15 +20,18 @@ h_axes.YAxis.FontSize = 16;
 h_axes.XAxis.FontName = 'Helvetica';
 h_axes.YAxis.FontName = 'Helvetica';
 
-axis([15 60 0 0.5])
+axis([15 85 0 0.5])
 % 
-xticks([15:5:60])
+xticks([15:10:85])
 yticks([0:0.1:0.5])
-l=legend({'$\overline{\chi_A^2}=16$ ($\chi^2$ without motion blur)'});
-set(l,'Interpreter','latex');
-l.FontSize=16.0;
+
 %,'in spite of ($\overline{\chi_A^2}<\overline{\chi_B^2}$)'
-ylabel({'Error rate : Probability of $(\chi_A^2>\chi_B^2)$'},'interpreter','latex','FontSize',17,'Color','k')
+ylabel({'Error rate: Probability of $(\chi_A^2>\chi_B^2)$'},'interpreter','latex','FontSize',17,'Color','k')
+xlabel({'The amount of blur $\overline{\chi_B^2}$ (corresponding to $v_{\textrm{dff}}$) [pixel]'},'interpreter','latex','FontSize',17)
 grid on
-xlabel('$\overline{\chi_B^2}$: corresponding to the amount of blur','interpreter','latex','FontSize',18,'Color','k')
-print(gcf,'-dpng', '-r500','../../Images/Output/Resolution_Chi_vs_Motion/Error_Rate_of_Pixel_Selection.png')
+str = 'The amount of blur $\overline{\chi_B^2}$ corresponding to ';
+%xlabel(str,'interpreter','latex','FontSize',17,'Color','k')
+l=legend({'$\overline{\chi_A^2}=15$ ($\chi^2$ with free motion blur)'});
+l.FontSize=16.0;
+set(l,'interpreter','latex')
+print(gcf,'-dpng', '-r500','../../Images/Output/Resolution_Chi_vs_Motion/Error_Rate_of_Pixel_Selection_20201221.png')

@@ -6,6 +6,7 @@ q=1;
 %Obj='IEEE_Access_traffic_Z_chi16'
 Obj='IEEE_Access_sky_Z_chi16'
 %Obj='IEEE_limitation';
+Obj='airplane_bridge512'
 %% Original Bit-plane
 load(['../Images/Output/',Obj,'/Original_bitplanes']);
 %% GT

@@ -1,4 +1,4 @@
-function[result_2D]=Function_Module_Chi2MapCul_Mpixel(bitplane_origin,down_sample_rate,M)
+function[result_2D,levelM]=Function_Module_Chi2MapCul_Mpixel(bitplane_origin,down_sample_rate,M)
 
 %%%%%%% Bitplane down Sampling %%%%%%%%%%%%%%%%%%%%%%%%%%%% 
 % down_sample_rate=0 => Without Down Sample
