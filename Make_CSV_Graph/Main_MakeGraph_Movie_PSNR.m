@@ -2,7 +2,8 @@ clear
 close all
 %load(['../../csv/IEEE/20201128_MCError'])
 %load(['../../Images/Output/airplane_bridge512/Movie_zoom_psnr'])
-load(['../../Images/Output/test_proposed/Movie_skate_psnr'])
+%load(['../../Images/Output/test_proposed/Movie_skate_psnr'])
+load(['../../Images/Output/test_proposed/Movie_psnr'])
 %csv_psnr=csv_ssim;
 A=csv_psnr(1,1:end);
 B=csv_psnr(2,1:end);
@@ -15,7 +16,7 @@ plot(A,B,'b-o','MarkerSize',2,'LineWidth',1,'MarkerFaceColor','b','MarkeredgeCol
 %B=csv_psnr(5,1:end);
 %plot(A,B,'r-o','MarkerSize',3,'LineWidth',0.8,'MarkerFaceColor','r','MarkeredgeColor','r')
 Fsize_label=18;
-%axis([1 200 0 1])
+axis([1 100 24 32])
 ax = gca;
 ax.FontSize=16;
 xlabel('Frame number','interpreter','latex','FontSize',Fsize_label)

@@ -2,7 +2,7 @@ clear
 close all
 %% paramater(all)
 q=1;                     %threashold
-alpha=1; %0.4                    %paramater for contralling incident photon
+alpha=1.0; %0.4                    %paramater for contralling incident photon
 %SIZE=[512 512];
 %SIZE=[720 1280];
 SIZE=[512 512]*2;
@@ -11,7 +11,7 @@ Num_bitplanes=16;
 %%
 sigma_chi=2;
 %% chi update ver param
-K=1;
+K=17;%17
 %% important param
 K_MLE=3; %default5
 M=4;
@@ -31,8 +31,8 @@ CIS_readnoise=2;
 %% こっち
 %Obj='test_proposed'
 %Obj='test'
-Obj='MSrep_traffic'
-%Obj='MSrep_sky'
+%Obj='MSrep_traffic'
+Obj='MSrep_sky'
 
 ME_results=zeros(4,Loop_Num);
 load(['../Images/Output/',Obj,'/Incident_photons']);
@@ -41,7 +41,7 @@ CIS_output=mat2gray(CIS_output)*255;
 CIS_img=imboxfilt(CIS_output,K_MLE);
 CIS_img_long = imresize(imbilatfilt(CIS_img, K_birateral_CIS),SIZE,'bicubic');
 CIS_img_long=mat2gray(CIS_img_long)*255;
-CIS_output=sum(Incident_photons(:,:,1:Num_bitplanes/4),3)+poissrnd(ones(SIZE)*CIS_readnoise);
+CIS_output=sum(Incident_photons(:,:,round(Num_bitplanes/2-Num_bitplanes/8):round(Num_bitplanes/2+Num_bitplanes/8)),3)+poissrnd(ones(SIZE)*CIS_readnoise);
 CIS_output=mat2gray(CIS_output)*255;
 CIS_img=imboxfilt(CIS_output,K_MLE);
 CIS_img_short = imresize(imbilatfilt(CIS_img, K_birateral_CIS),SIZE,'bicubic');
@@ -89,6 +89,11 @@ for i=0:Loop_Num-1
     chi_2D=imresize(chi_2D,SIZE,'bicubic');
     chi_2D =imboxfilt(chi_2D,K);
     CHI_Maps(:,:,(i+1))=chi_2D;
+    tmp=img;
+    tmp = imbilatfilt(tmp,10);
+    tmp=mat2gray(tmp)*255;
+    imwrite(uint8(tmp*1.1),['../Images/Output/',Obj,'/Partially_deblurred_image_',num2str(i+1),'.png'])
+    
 end
 
 %% Reconstruction Min
@@ -133,10 +138,15 @@ for i=1:SIZE(1)
     end
 end
 %% motion filter advance
-up_motion_filt=85;%bus20
-under_motion_filt=75;%bus14
-K_th_denoise_motion=0;
-K_th_denoise_static=10;
+up_motion_filt=30;%bus20 %car85 %sign10
+under_motion_filt=25;%bus14 %car75 %sign0
+K_th_denoise_motion=2;
+K_th_denoise_static=1000;
+%% ちゅうい
+up_motion_filt2=85;
+under_motion_filt2=75;
+K_th_denoise_motion2=100;
+%%
 for i=1:SIZE(1)
     i
     for j=1:SIZE(2)
@@ -145,6 +155,11 @@ for i=1:SIZE(1)
             %Motion=sqrt(ME_results(1,t)*ME_results(1,t)+ME_results(2,t)*ME_results(2,t));
             if(Motion<=up_motion_filt && Motion>=under_motion_filt)
                 if(CHI_Maps(i,j,t)<=K_th_denoise_motion)
+                    img_result_rank_advance_motion_filter(i,j)= img_result_rank_advance_motion_filter(i,j)+imgs(i,j,t);
+                    cnt_advance_motion_filter(i,j)=cnt_advance_motion_filter(i,j)+1;
+                end
+            elseif(Motion<=up_motion_filt2 && Motion>=under_motion_filt2)
+                if(CHI_Maps(i,j,t)<=K_th_denoise_motion2)
                     img_result_rank_advance_motion_filter(i,j)= img_result_rank_advance_motion_filter(i,j)+imgs(i,j,t);
                     cnt_advance_motion_filter(i,j)=cnt_advance_motion_filter(i,j)+1;
                 end
@@ -179,16 +194,16 @@ img_result_rank_advance_lowth=mat2gray(img_result_rank_advance_lowth)*255;
 img_result_rank_advance_motion_filter=mat2gray(img_result_rank_advance_motion_filter)*255;
 img_blur=mat2gray(img_blur)*255;
 
-% imwrite(uint8(bitplanes(:,:,size(bitplanes,3)/2)*255),['../Images/Output/',Obj,'/bitplane.png'])
-% imwrite(uint8(CIS_img_long),['../Images/Output/',Obj,'/CIS_long.png'])
-% imwrite(uint8(CIS_img_short),['../Images/Output/',Obj,'/CIS_short.png'])
-% imwrite(uint8(img_blur),['../Images/Output/',Obj,'/OIS_blur.png'])
-% imwrite(uint8(img_result_rank),['../Images/Output/',Obj,'/OIS_Ours.png'])
-% imwrite(uint8(img_result_rank_advance),['../Images/Output/',Obj,'/OIS_Ours_advance.png'])
-% imwrite(uint8(img_result_rank_advance_highth),['../Images/Output/',Obj,'/OIS_Ours_advance_highth.png'])
-% imwrite(uint8(img_result_rank_advance_lowth),['../Images/Output/',Obj,'/OIS_Ours_advance_lowth.png'])
-imwrite(uint8(img_result_rank_advance_motion_filter),['../Images/Output/',Obj,'/OIS_Ours_advance_motion_filter.png'])
-%imwrite(uint8(img_blur),['../Images/Output/',Obj,'/Re_img_blur/frame',num2str(f,'%03u'),'.png'])
+imwrite(uint8(bitplanes(:,:,size(bitplanes,3)/2)*255),['../Images/Output/',Obj,'/bitplane.png'])
+imwrite(uint8(CIS_img_long),['../Images/Output/',Obj,'/CIS_long.png'])
+imwrite(uint8(CIS_img_short),['../Images/Output/',Obj,'/CIS_short.png'])
+imwrite(uint8(img_blur),['../Images/Output/',Obj,'/OIS_blur.png'])
+imwrite(uint8(img_result_rank*1.1),['../Images/Output/',Obj,'/OIS_Ours.png'])
+imwrite(uint8(img_result_rank_advance*1.1),['../Images/Output/',Obj,'/OIS_Ours_advance.png'])
+imwrite(uint8(img_result_rank_advance_highth),['../Images/Output/',Obj,'/OIS_Ours_advance_highth.png'])
+imwrite(uint8(img_result_rank_advance_lowth),['../Images/Output/',Obj,'/OIS_Ours_advance_lowth.png'])
+imwrite(uint8(img_result_rank_advance_motion_filter),['../Images/Output/',Obj,'/MF/OIS_Ours_advance_MF_IE.png'])
+% imwrite(uint8(img_blur),['../Images/Output/',Obj,'/Re_img_blur/frame',num2str(f,'%03u'),'.png'])
 % imwrite(uint8(img_result_rank),['../Images/Output/test_proposed/Re_img_only/frame',num2str(f,'%03u'),'.png'])
 % imwrite(uint8(img_result_rank_zengo),['../Images/Output/test_proposed/Re_img_zengo/frame',num2str(f,'%03u'),'.png'])
 

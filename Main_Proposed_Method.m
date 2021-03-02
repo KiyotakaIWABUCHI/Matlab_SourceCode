@@ -1,5 +1,6 @@
 clear
 close all
+%%%%%%%%%%%%% %%%%%%%%%%%%% %%%%%%%%%%%%% %%%%%%%%%%%%% 
 mode=1; %mode0:bitlpane gen %mode1:bitplane load
 %%%%%%%%%%%%% Initializes St%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Garamater Public
@@ -7,7 +8,7 @@ output_subframe_number=32; %number of bitplane image
 max_photon_number=1;       %Max number of total incident photon
 min_photon_number=0;        %Min number of total incident photon
 q=1;                        %threashold
-alpha=1.0; %0.4               %paramater for contralling incident photon
+alpha=1.5; %0.4               %paramater for contralling incident photon
 block_size_MLE=10;
 %SIZE=[720 1280];
 SIZE=[512 512]*2;
@@ -30,8 +31,8 @@ K_sigmoid_centor=18.47;
 %K_sigmoid_centor=30.58;
 STEP_sigmoid=0.25; %注意 Resolution測定時，Map指定のためコメントアウト
 K_DIV=0.5; %注意0.5はほぼ閾値判定
-T=50;
-Intv_frame_r=16;
+T=100;
+Intv_frame_r=4;
 Intv_frame=(output_subframe_number-1)/2;
 %% Read Images
 frame_cnt=0;
@@ -44,7 +45,9 @@ if(mode==0)
         f
         for t=1:60
             %tmp=rgb2gray(imread(['../Images/Input/3dsmax_long_movie/airplane_bridge_frame',pad(num2str(t-1+60*(f-1)),4,'left','0'),'.png']));
-            tmp=rgb2gray(imread(['../Images/Input/3dsmax_airplane_heri/airplane_heri_frame',pad(num2str(t-1+60*(f-1)),4,'left','0'),'.png']));
+            %tmp=rgb2gray(imread(['../Images/Input/3dsmax_airplane_heri/airplane_heri_frame',pad(num2str(t-1+60*(f-1)),4,'left','0'),'.png']));
+            tmp=rgb2gray(imread(['../Images/Input/3dsmax_airplane_ship/airplane_ship_frame',pad(num2str(t-1+60*(f-1)),4,'left','0'),'.png']));
+
             Img_set(:,:,t)=imresize(tmp(1:end,1:end),SIZE,'bicubic');
         end
         [bitplane,Incident_photons]=Function_BitplaneGen(Img_set,size(Img_set,3),max_photon_number,min_photon_number,q,alpha,DC_rate);
@@ -62,6 +65,7 @@ for r=1:T
         Imgs=zeros(SIZE(1),SIZE(2),output_subframe_number);
         bitplanes=zeros(SIZE(1),SIZE(2),output_subframe_number);
         disp('image_reading_now...')
+        frame_cnt=0;
         for t_tmp=1:output_subframe_number
             num_f_tmp=t_tmp-1+floor(Intv_frame*(f-1));
             num_f=num_f_tmp*4+Intv_frame_r*(r-1);
@@ -72,7 +76,9 @@ for r=1:T
             end
             
             %tmp=rgb2gray(imread(['../Images/Input/3dsmax_long_movie/airplane_bridge_frame',pad(num2str(num_f),4,'left','0'),'.png']));
-            tmp=rgb2gray(imread(['../Images/Input/3dsmax_airplane_heri/airplane_heri_frame',pad(num2str(num_f),4,'left','0'),'.png']));
+            %tmp=rgb2gray(imread(['../Images/Input/3dsmax_airplane_heri/airplane_heri_frame',pad(num2str(num_f),4,'left','0'),'.png']));
+             tmp=rgb2gray(imread(['../Images/Input/3dsmax_airplane_ship/airplane_ship_frame',pad(num2str(num_f),4,'left','0'),'.png']));
+          
             bitplane_tmp=double((imread(['../Images/Output/test_proposed/bitplanes/frame',pad(num2str(num_f),4,'left','0'),'.png'])))/255;
             %tmp=rgb2gray(imread(['D:/Input/frames2/frame_',pad(num2str(t_tmp-1+Intv_frame*(f-1)),4,'left','0'),'.bmp']));
             Imgs(:,:,t_tmp)=imresize(tmp(1:end,1:end),SIZE,'bicubic');
@@ -109,7 +115,7 @@ for r=1:T
             N_Pyramid=4;
             Range_x=[-4 4 1];
             Range_y=[-1 1 1];
-            N_sort=1;
+            N_sort=3;
             
             [bitplane_MC,Estimation_x,Estimation_y]=Function_Pyramidal_ME_top(bitplanes,Range_x,Range_y,Heat_map,n,M,N_Pyramid,N_sort);
             bitplane_shifted=Function_ShiftBitplane_Selective_Refframe(bitplanes,Estimation_x(1),Estimation_y(1),n);
@@ -134,6 +140,6 @@ for r=1:T
             save(['../Images/Output/test_proposed/time',num2str(r),'/set',num2str(f),'/IterativeOutput_',num2str(i+1),'times_bitplaneStyle'],'bitplane_shifted')
             save(['../Images/Output/test_proposed/time',num2str(r),'/set',num2str(f),'/Iterative_ME_Result_',num2str(i+1),'times'],'ME_Result')
             imwrite(uint8(Re_img),['../Images/Output/test_proposed/time',num2str(r),'/set',num2str(f),'/IterativeOutput_',num2str(i+1),'times.png'])
-        end
+       end
     end
 end

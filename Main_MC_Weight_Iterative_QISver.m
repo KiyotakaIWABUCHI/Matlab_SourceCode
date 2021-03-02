@@ -7,7 +7,7 @@ M=4; %chi-suqare cal param
 max_photon_number=1;       %Max number of total incident photon
 min_photon_number=0;        %Min number of total incident photon
 q=1;                        %threashold
-alpha=1.0; %0.4               %paramater for contralling incident photon
+alpha=1.5; %0.4               %paramater for contralling incident photon
 block_size_MLE=10;
 scale=4;
 SIZE=[256 256]*scale;
@@ -20,9 +20,9 @@ Range_rotate=[-0 0 2]; %なし eagle -20 20
 Range_scale=[0 0 10]; %なし
 
 %% Iterative Loop Num
-T_LOOP=12;  %注意 Resolution測定時，1
+T_LOOP=20;  %注意 Resolution測定時，1
 %% Map Update
-K_oversample=3;
+K_oversample=3;%3
 %K_sigmoid_centor=7.82; 
 %K_sigmoid_centor=18.47; %df7
 K_sigmoid_centor=11.00; %df3
@@ -35,7 +35,9 @@ for t_tmp=1:output_subframe_number
     %% Choise Images
     t_tmp_skip=round(t_tmp*16*3/4);
     %tmp=rgb2gray(imread(['../Images/Input/3dsmax_traffic/traffic_frame',pad(num2str(t_tmp_skip-1),4,'left','0'),'.png']));
-    tmp=rgb2gray(imread(['../Images/Input/3dsmax_sky/sky_frame',pad(num2str(t_tmp_skip-1),4,'left','0'),'.png']));
+    %tmp=rgb2gray(imread(['../Images/Input/3dsmax_sky/sky_frame',pad(num2str(t_tmp_skip-1),4,'left','0'),'.png']));
+    %tmp=rgb2gray(imread(['../Images/Input/3dsmax_IE_ppt/IE_ppt_frame',pad(num2str(t_tmp_skip-1+90),4,'left','0'),'.png']));
+    tmp=rgb2gray(imread(['../Images/Input/3dsmax_scene_ppt/scene_ppt_frame',pad(num2str(t_tmp_skip-1),4,'left','0'),'.png']));
       %%
     Imgs(:,:,t_tmp)=imresize(tmp(1:end,1:end),SIZE,'bicubic');
     
@@ -65,25 +67,25 @@ for i=0:T_LOOP-1
 %     save(['../Images/Output/test/HeatMap_',num2str(i+1),'times_bitplaneStyle'],'Heat_map')  
     %% 高速化時・並進のみ
     N_Pyramid=5;
-    Range_x=[-0 0 1];
-    Range_y=[-4 4 1];
-    Range_theta=[-20 20 2];
+    Range_x=[-4 4 1];
+    Range_y=[-2 2 1];
+    Range_theta=[-0 0 2];
     %Range_theta=[-0 0 2];
     Range_scale=[0 0 1];
     N_sort=3;
 %     Estimation_theta=0;
 %     Estimation_scale=0;
-    %[bitplane_MC,Estimation_x,Estimation_y]=Function_ME_ROIHeatMap(bitplanes,Range_x,Range_y,Heat_map,down_sample_rate);
-%     [non,Estimation_x,Estimation_y]=Function_Pyramidal_ME_top(bitplanes,Range_x,Range_y,Heat_map,n,M,N_Pyramid,N_sort);
-%     bitplane_shifted=Function_ShiftBitplane_Selective_Refframe(bitplanes,Estimation_x(1),Estimation_y(1),n);
-%     Re_img=Function_Reconstruction_MLE_Oversample(bitplane_shifted,alpha,q,5);
+   %% [bitplane_MC,Estimation_x,Estimation_y]=Function_ME_ROIHeatMap(bitplanes,Range_x,Range_y,Heat_map,down_sample_rate);
+    [non,Estimation_x,Estimation_y]=Function_Pyramidal_ME_top(bitplanes,Range_x,Range_y,Heat_map,n,M,N_Pyramid,N_sort);
+    bitplane_shifted=Function_ShiftBitplane_Selective_Refframe(bitplanes,Estimation_x(1),Estimation_y(1),n);
+    Re_img=Function_Reconstruction_MLE_Oversample(bitplane_shifted,alpha,q,5);
     %imshow(uint8(Re_img))
     
     %% 並進＋回転・拡大あり
-    O_obj=Function_ObjGrav_Cul(bitplanes,N_Pyramid,M);
-    [non,Estimation_x,Estimation_y,Estimation_theta,Estimation_scale]=Function_Pyramidal_ME_rigid_top(bitplanes,Range_x,Range_y,Range_theta,Range_scale,O_obj,Heat_map,n,M,N_Pyramid,N_sort);
-    bitplane_shifted=Function_ShiftBitplane_Rigid_Selective_Refframe(bitplanes,Estimation_x(1),Estimation_y(1),Estimation_theta(1),Estimation_scale(1),O_obj,n);
-    Re_img=Function_Reconstruction_MLE_Oversample(bitplane_shifted,alpha,q,5);
+%     O_obj=Function_ObjGrav_Cul(bitplanes,N_Pyramid,M);
+%     [non,Estimation_x,Estimation_y,Estimation_theta,Estimation_scale]=Function_Pyramidal_ME_rigid_top(bitplanes,Range_x,Range_y,Range_theta,Range_scale,O_obj,Heat_map,n,M,N_Pyramid,N_sort);
+%     bitplane_shifted=Function_ShiftBitplane_Rigid_Selective_Refframe(bitplanes,Estimation_x(1),Estimation_y(1),Estimation_theta(1),Estimation_scale(1),O_obj,n);
+%     Re_img=Function_Reconstruction_MLE_Oversample(bitplane_shifted,alpha,q,5);
     imshow(uint8(Re_img))
 %[bitplane_MC,Estimation_x,Estimation_y]=Function_ME_ROIHeatMap_ROTATE_CentorTime(bitplanes,Range_x,Range_y,Range_scale,Range_rotate,O_obj,Heat_map,down_sample_rate,n);
     %% ROI Map Update  
@@ -98,8 +100,8 @@ for i=0:T_LOOP-1
     %% 出力
     ME_Result(:,:,1)=Estimation_x(1);
     ME_Result(:,:,2)=Estimation_y(1);
-    ME_Result(:,:,3)=Estimation_theta(1);
-    ME_Result(:,:,4)=Estimation_scale(1);
+%     ME_Result(:,:,3)=Estimation_theta(1);
+%     ME_Result(:,:,4)=Estimation_scale(1);
     bitplane_MC=bitplane_shifted;
     save(['../Images/Output/test/IterativeOutput_',num2str(i+1),'times_bitplaneStyle'],'bitplane_MC')
     save(['../Images/Output/test/Iterative_ME_Result_',num2str(i+1),'times'],'ME_Result')

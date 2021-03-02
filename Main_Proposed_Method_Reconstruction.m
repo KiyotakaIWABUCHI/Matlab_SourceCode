@@ -2,7 +2,7 @@ clear
 close all
 %% paramater(all)
 q=1;                     %threashold
-alpha=1; %0.4                    %paramater for contralling incident photon
+alpha=1.5; %0.4                    %paramater for contralling incident photon
 %SIZE=[512 512];
 %SIZE=[720 1280];
 SIZE=[512 512]*2;
@@ -10,13 +10,15 @@ Num_bitplanes=32;
 %%
 sigma_chi=2;
 %% chi update ver param
-K=13;
+K=17;
 %% important param
 Output_MLE_K=3; %default5
 M=4;
 K_birateral=1000;
+K_birateral_CIS=1000;
 Downsample_chi=2; %default3
-K_zengo=10.00; %調節param
+%K_zengo=10.00; %調節param
+K_zengo=14.0;
 K_denoise=18.47; %調節param
 Motion_filter=0;
 %%
@@ -30,12 +32,11 @@ rank_num=1;
 Th_HeatMap=0.0;
 %%
 K_MLE=3;
-K_birateral_CIS=1000;
 Loop_Num=10;
 Set=3;
-T=50;
+T=100;
 %%
-CIS_readnoise=5;
+CIS_readnoise=2;
 %% Obj Selection
 %% こっち
 Obj='test_proposed'
@@ -62,12 +63,12 @@ for r=1:T
         CIS_img=imboxfilt(CIS_output,K_MLE);
         CIS_img_long = imresize(imbilatfilt(CIS_img, K_birateral_CIS),SIZE,'bicubic');
         CIS_img_long=mat2gray(CIS_img_long)*255;
-        CIS_output=sum(Incident_photons(:,:,1:Num_bitplanes/8),3)+poissrnd(ones(SIZE)*CIS_readnoise);
+        CIS_output=sum(Incident_photons(:,:,round(Num_bitplanes/2+Num_bitplanes/16):round(Num_bitplanes/2+Num_bitplanes/16)),3)+poissrnd(ones(SIZE)*CIS_readnoise);
         CIS_output=mat2gray(CIS_output)*255;
         CIS_img=imboxfilt(CIS_output,K_MLE);
         CIS_img_short = imresize(imbilatfilt(CIS_img, K_birateral_CIS),SIZE,'bicubic');
         CIS_img_short=mat2gray(CIS_img_short)*255;
-        imshow(uint8(CIS_img_long))
+        imshow(uint8(CIS_img_short))
 
         %         AD_result=zeros(SIZE);
         %         for ad=1:2^ADbit
@@ -247,14 +248,14 @@ for r=1:T
             img_result_rank_denoise_motion_filt_denoise = imbilatfilt(img_result_rank_denoise_motion_filt_denoise,K_birateral);
             img_result_rank_denoise_motion_filt_deblur = imbilatfilt(img_result_rank_denoise_motion_filt_deblur,K_birateral);
         end
-%         imwrite(uint8(img_blur),['../Images/Output/test_proposed/Re_img_blur/frame',num2str(r,'%03u'),'.png'])
+         imwrite(uint8(img_blur),['../Images/Output/test_proposed/Re_img_blur/frame',num2str(r,'%03u'),'.png'])
          imwrite(uint8(img_result_rank),['../Images/Output/test_proposed/Re_img_only/frame',num2str(r,'%03u'),'.png'])
          imwrite(uint8(img_result_rank_zengo),['../Images/Output/test_proposed/Re_img_zengo/frame',num2str(r,'%03u'),'.png'])
-          imwrite(uint8(img_result_rank_denoise),['../Images/Output/test_proposed/Re_img_denoise/frame',num2str(r,'%03u'),'.png'])
-%         imwrite(uint8(CIS_img_short),['../Images/Output/test_proposed/Re_CIS_short/frame',num2str(r,'%03u'),'.png'])
-%         imwrite(uint8(CIS_img_long),['../Images/Output/test_proposed/Re_CIS_long/frame',num2str(r,'%03u'),'.png'])
-          imwrite(uint8(img_result_rank_denoise_motion_filt_denoise),['../Images/Output/test_proposed/Re_img_Motionfilter_denoise/frame',num2str(r,'%03u'),'.png'])
-          imwrite(uint8(img_result_rank_denoise_motion_filt_deblur),['../Images/Output/test_proposed/Re_img_Motionfilter_deblur/frame',num2str(r,'%03u'),'.png'])
+         imwrite(uint8(img_result_rank_denoise),['../Images/Output/test_proposed/Re_img_denoise/frame',num2str(r,'%03u'),'.png'])
+         imwrite(uint8(CIS_img_short),['../Images/Output/test_proposed/Re_CIS_short/frame',num2str(r,'%03u'),'.png'])
+         imwrite(uint8(CIS_img_long),['../Images/Output/test_proposed/Re_CIS_long/frame',num2str(r,'%03u'),'.png'])
+         imwrite(uint8(img_result_rank_denoise_motion_filt_denoise),['../Images/Output/test_proposed/Re_img_Motionfilter_denoise/frame',num2str(r,'%03u'),'.png'])
+         imwrite(uint8(img_result_rank_denoise_motion_filt_deblur),['../Images/Output/test_proposed/Re_img_Motionfilter_deblur/frame',num2str(r,'%03u'),'.png'])
     end
 end
 

@@ -15,8 +15,8 @@ Obj_Size=[64 64]; %たてｘよこ
 StartPix=[60 50 32]; %たて　よこ　インターバル
 Mov_Obj=[80 0];
 Back_color=85;
-Obj_color2=30; %51
-Obj_color=177; %411
+Obj_color2=20%30; %51
+Obj_color=200%177; %411
 
 Hist_data_chi_bright=zeros(1,1);
 Hist_data_var_bright=zeros(1,1);
@@ -110,6 +110,8 @@ Chi_Map_norm_static=Chi_Map_static;
 Var_Map_norm_static=Var_Map_static;
 Detected_Chi_static=double(Chi_Map_norm_static>=th_acc_chi);
 Detected_Var_static=double(Var_Map_norm_static>=th_acc_var);
+imshow(uint8(Detected_Chi_static*255))
+imshow(uint8(Detected_Var_static*255))
 imwrite(uint8(Detected_Chi_static*255),'../Images/Output/MS_report/MD_Chi_static.png')
 imwrite(uint8(Detected_Var_static*255),'../Images/Output/MS_report/MD_Var_static.png')
 
@@ -130,17 +132,19 @@ h_axes.YAxis.FontSize = 16;
 h_axes.XAxis.FontName = 'Helvetica';
 h_axes.YAxis.FontName = 'Helvetica';
 
-ylabel('Precision')
-xlabel('Recall')
-l=legend('$\chi^2$','$\sigma^2$','Interpreter','latex','Location','northoutside');
+ylabel('Precision','Interpreter','latex')
+xlabel('Recall','Interpreter','latex')
+l=legend('$\chi^2$','$\sigma^2$','Interpreter','latex','Location','northeast','Box','off');
 l.FontSize=16.0;
-l.NumColumns = 2;
+l.NumColumns =1;
 pbaspect([1.4 1 1])
 
 axis([0 1 0 1])
 xticks([0:0.2:1])
 yticks([0:0.2:1])
 grid on
+%figure
+%imshow(uint8(mat2gray(Chi_Map_norm)*128))
 imwrite(uint8(MD_result_chi*255),'../Images/Output/MS_report/MD_Chi.png')
 imwrite(uint8(MD_result_var*255),'../Images/Output/MS_report/MD_Var.png')
 print(gcf,'-dpng', '-r500','../Images/Output/MS_report/Recall_Precision.png')

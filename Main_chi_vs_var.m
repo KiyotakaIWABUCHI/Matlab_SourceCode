@@ -63,7 +63,7 @@ h_axes.YAxis.FontName = 'Helvetica';
 
 ylabel('Counts','interpreter','latex','FontSize',20,'Color','k')
 xlabel('$\chi^2$','interpreter','latex','FontSize',20,'Color','k')
-l=legend(['Photon-Density:',num2str(Photon_level_bright)],['Photon-Density:',num2str(Photon_level_low)]);
+l=legend(['Photon-level:',num2str(Photon_level_bright)],['Photon-level:',num2str(Photon_level_low)]);
 l.FontSize=16.0;
 Ex_chi_bright=round(sum(Hist_data_chi_bright)/size(Hist_data_chi_bright,2),2);
 Ex_chi_low=round(sum(Hist_data_chi_low)/size(Hist_data_chi_low,2),2);
@@ -86,7 +86,7 @@ h_axes.YAxis.FontName = 'Helvetica';
 ylabel('Counts','interpreter','latex','FontSize',20,'Color','k')
 xlabel('$\sigma^2$','interpreter','latex','FontSize',20,'Color','k')
 
-l=legend(['Photon-Density:',num2str(Photon_level_bright)],['Photon-Density:',num2str(Photon_level_low)]);
+l=legend(['Photon-level:',num2str(Photon_level_bright)],['Photon-level:',num2str(Photon_level_low)]);
 l.FontSize=16.0;
 Ex_var_bright=round(sum(Hist_data_var_bright)/size(Hist_data_var_bright,2),2);
 Ex_var_low=round(sum(Hist_data_var_low)/size(Hist_data_var_low,2),2);
